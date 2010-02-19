@@ -103,6 +103,9 @@ def main():
 
     run_import(args[0], opts.mesg)
 
+    if opts.push:
+        sp.check_call(['git', 'push', opts.remote, 'gh-pages'])
+
 if __name__ == '__main__':
     main()
 
