@@ -49,7 +49,7 @@ def start_commit(pipe, message):
     pipe.stdin.write('commit refs/heads/gh-pages\n')
     pipe.stdin.write('committer %s <%s> %s\n' % (username, email, make_when()))
     pipe.stdin.write('data %d\n%s\n' % (len(message), message))
-    pipe.stdin.write('filedeleteall\n')
+    pipe.stdin.write('deleteall\n')
 
 def add_file(pipe, srcpath, tgtpath):
     pipe.stdin.write('M 100644 inline %s\n' % tgtpath)
