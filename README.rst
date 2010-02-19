@@ -1,7 +1,7 @@
 GitHub Pages Import
 ===================
 
-As part of gunicorn_, me and `Benoît Chesneau`_ have been starting to look at
+As part of gunicorn_, me and `Benoit Chesneau`_ have been starting to look at
 how to host documentation. There's the obvious method of using GitHub_'s
 post-update hooks to trigger doc builds and rsync to a webserver, but we ended
 up wanting to try out github's hosting to make the whole interface a bit more
@@ -23,10 +23,11 @@ from even having to think about the branch and everything becomes magical.
 This is what ``ghp-import`` was written for.
 
 .. _gunicorn: http://www.gunicorn.com/
-.. _`Benoît Chesneau`: http://github.com/benoitc
+.. _`Benoit Chesneau`: http://github.com/benoitc
 .. _GitHub: http://github.com/
 .. _`GitHub Pages`: http://pages.github.com/
 .. _Sphinx: http://sphinx.pocoo.org/
+.. _`github-tools`: http://dinoboff.github.com/github-tools/
 
 Usage
 =====
