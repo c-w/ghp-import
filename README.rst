@@ -29,6 +29,14 @@ This is what ``ghp-import`` was written for.
 .. _Sphinx: http://sphinx.pocoo.org/
 .. _`github-tools`: http://dinoboff.github.com/github-tools/
 
+Big Fat Warning
+===============
+
+This will **DESTROY** your gh-pages branch. If you love it, you'll want to take
+backups before playing with this. This script assumes that gh-pages is 100%
+derivative. You should never edit files in your gh-pages branch by hand if
+you're using this script because you will lose your work.
+
 Usage
 =====
 
