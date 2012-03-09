@@ -22,7 +22,7 @@ def is_repo(d):
     headref = os.path.join(d, 'HEAD')
     if os.path.isfile(headref):
         return True
-    if os.path.islinke(headref) and os.readlink(headref).startswith("refs"):
+    if os.path.islink(headref) and os.readlink(headref).startswith("refs"):
         return True
     return False
 
