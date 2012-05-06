@@ -18,7 +18,7 @@ setup(
     license = "Tumbolia Public License",
     url = "http://github.com/davisp/ghp-import",
     zip_safe = False,
-    
+
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -28,6 +28,6 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
     ],
-   
+
     scripts = ['ghp-import']
 )
