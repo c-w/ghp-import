@@ -7,9 +7,15 @@
 import optparse as op
 import os
 import subprocess as sp
+import sys
 import time
 
 __usage__ = "%prog [OPTIONS] DIRECTORY"
+
+def to_bytes(text):
+    if not isinstance(text, bytes):
+        text = text.encode()
+    return text
 
 def is_repo(d):
     if not os.path.isdir(d):
@@ -69,21 +75,21 @@ def make_when(timestamp=None):
 def start_commit(pipe, message):
     username = get_config("user.name")
     email = get_config("user.email")
-    pipe.stdin.write('commit refs/heads/gh-pages\n')
-    pipe.stdin.write('committer %s <%s> %s\n' % (username, email, make_when()))
-    pipe.stdin.write('data %d\n%s\n' % (len(message), message))
+    pipe.stdin.write(to_bytes('commit refs/heads/gh-pages\n'))
+    pipe.stdin.write(to_bytes('committer %s <%s> %s\n' % (username, email, make_when())))
+    pipe.stdin.write(to_bytes('data %d\n%s\n' % (len(message), message)))
     head = get_prev_commit()
     if head:
-        pipe.stdin.write('from %s\n' % head)
-    pipe.stdin.write('deleteall\n')
+        pipe.stdin.write(to_bytes('from %s\n' % head))
+    pipe.stdin.write(to_bytes('deleteall\n'))
 
 def add_file(pipe, srcpath, tgtpath):
-    pipe.stdin.write('M 100644 inline %s\n' % tgtpath)
+    pipe.stdin.write(to_bytes('M 100644 inline %s\n' % tgtpath))
     with open(srcpath) as handle:
         data = handle.read()
-        pipe.stdin.write('data %d\n' % len(data))
-        pipe.stdin.write(data)
-        pipe.stdin.write('\n')
+        pipe.stdin.write(to_bytes('data %d\n' % len(data)))
+        pipe.stdin.write(to_bytes(data))
+        pipe.stdin.write(to_bytes('\n'))
 
 def run_import(srcdir, message):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
@@ -93,10 +99,10 @@ def run_import(srcdir, message):
         for fn in fnames:
             fpath = os.path.join(path, fn)
             add_file(pipe, fpath, os.path.relpath(fpath, start=srcdir))
-    pipe.stdin.write('\n')
+    pipe.stdin.write(to_bytes('\n'))
     pipe.stdin.close()
     if pipe.wait() != 0:
-        print "Failed to process commit."
+        sys.stdout.write(to_bytes("Failed to process commit.\n"))
 
 def options():
     return [
