@@ -45,9 +45,10 @@ Usage
     Usage: ghp-import [OPTIONS] DIRECTORY
 
     Options:
-      -m MESG     The commit message to use on the gh-pages branch.
-      -p          Push the branch to origin/gh-pages after committing.
+      -m MESG     The commit message to use on the target branch.
+      -p          Push the branch to origin/{branch} after committing.
       -r REMOTE   The name of the remote to push to. [origin]
+      -b BRANCH   Name of the branch to write to. [gh-pages]
       -h, --help  show this help message and exit
 
 Its pretty simple. Inside your repository just run ``ghp-import $DOCS_DIR``
@@ -57,6 +58,9 @@ commit to your ``gh-pages`` branch with the current documents in it.
 If you specify ``-p`` it will also attempt to push the ``gh-pages`` branch to
 GitHub. By default it'll just run ``git push origin gh-pages``. You can specify
 a different remote using the ``-r`` flag.
+
+You can specify a different branch with ``-b``. This is useful for user and
+organization page, which are served from the ``master`` branch.
 
 License
 -------
