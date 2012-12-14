@@ -23,6 +23,7 @@ if sys.version_info >= (2, 6, 0):
 else:
     enc = lambda t: t
 
+
 def is_repo(d):
     if not os.path.isdir(d):
         return False
@@ -38,6 +39,7 @@ def is_repo(d):
         return True
     return False
 
+
 def find_repo(path):
     if is_repo(path):
         return True
@@ -48,46 +50,52 @@ def find_repo(path):
         return False
     return find_repo(parent)
 
-def try_rebase(remote):
-    cmd = ['git', 'rev-list', '--max-count=1', 'origin/gh-pages']
+
+def try_rebase(remote, branch):
+    cmd = ['git', 'rev-list', '--max-count=1', '%s/%s' % (remote, branch)]
     p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
     (rev, ignore) = p.communicate()
     if p.wait() != 0:
         return True
-    cmd = ['git', 'update-ref', 'refs/heads/gh-pages', rev.strip()]
+    cmd = ['git', 'update-ref', 'refs/heads/%s' % branch, rev.strip()]
     if sp.call(cmd) != 0:
         return False
     return True
+
 
 def get_config(key):
     p = sp.Popen(['git', 'config', key], stdin=sp.PIPE, stdout=sp.PIPE)
     (value, stderr) = p.communicate()
     return value.strip()
 
-def get_prev_commit():
-    cmd = ['git', 'rev-list', '--max-count=1', 'gh-pages']
+
+def get_prev_commit(branch='gh-pages'):
+    cmd = ['git', 'rev-list', '--max-count=1', branch]
     p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
     (rev, ignore) = p.communicate()
     if p.wait() != 0:
         return None
     return rev.strip()
 
+
 def mk_when(timestamp=None):
     if timestamp is None:
         timestamp = int(time.time())
-    currtz = "%+05d" % (time.timezone / 36) # / 3600 * 100
+    currtz = "%+05d" % (time.timezone / 36)  # / 3600 * 100
     return "%s %s" % (timestamp, currtz)
 
-def start_commit(pipe, message):
+
+def start_commit(pipe, branch, message):
     uname = get_config("user.name")
     email = get_config("user.email")
-    pipe.stdin.write(enc('commit refs/heads/gh-pages\n'))
+    pipe.stdin.write(enc('commit refs/heads/%s\n' % branch))
     pipe.stdin.write(enc('committer %s <%s> %s\n' % (uname, email, mk_when())))
     pipe.stdin.write(enc('data %d\n%s\n' % (len(message), message)))
-    head = get_prev_commit()
+    head = get_prev_commit(branch)
     if head:
         pipe.stdin.write(enc('from %s\n' % head))
     pipe.stdin.write(enc('deleteall\n'))
+
 
 def add_file(pipe, srcpath, tgtpath):
     pipe.stdin.write(enc('M 100644 inline %s\n' % tgtpath))
@@ -97,10 +105,11 @@ def add_file(pipe, srcpath, tgtpath):
         pipe.stdin.write(enc(data))
         pipe.stdin.write(enc('\n'))
 
-def run_import(srcdir, message):
+
+def run_import(srcdir, branch, message):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
     pipe = sp.Popen(cmd, stdin=sp.PIPE)
-    start_commit(pipe, message)
+    start_commit(pipe, branch, message)
     for path, dnames, fnames in os.walk(srcdir):
         for fn in fnames:
             fpath = os.path.join(path, fn)
@@ -110,15 +119,19 @@ def run_import(srcdir, message):
     if pipe.wait() != 0:
         sys.stdout.write(enc("Failed to process commit.\n"))
 
+
 def options():
     return [
+        op.make_option('-b', dest='branch', default='gh-pages',
+            help='Import directory to this branch. [%default]'),
         op.make_option('-m', dest='mesg', default='Update documentation',
-            help='The commit message to use on the gh-pages branch.'),
+            help='The commit message to use on the [gh-pages] branch.'),
         op.make_option('-p', dest='push', default=False, action='store_true',
-            help='Push the branch to origin/gh-pages after committing.'),
+            help='Push the branch to origin/[gh-pages] after committing.'),
         op.make_option('-r', dest='remote', default='origin',
             help='The name of the remote to push to. [%default]')
     ]
+
 
 def main():
     parser = op.OptionParser(usage=__usage__, option_list=options())
@@ -136,14 +149,13 @@ def main():
     if not find_repo(os.getcwd()):
         parser.error("No Git repository found.")
 
-    if not try_rebase(opts.remote):
-        parser.error("Failed to rebase gh-pages branch.")
+    if not try_rebase(opts.remote, opts.branch):
+        parser.error("Failed to rebase %s branch." % opts.branch)
 
-    run_import(args[0], opts.mesg)
+    run_import(args[0], opts.branch, opts.mesg)
 
     if opts.push:
-        sp.check_call(['git', 'push', opts.remote, 'gh-pages'])
+        sp.check_call(['git', 'push', opts.remote, opts.branch])
 
 if __name__ == '__main__':
     main()
-
