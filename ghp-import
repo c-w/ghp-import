@@ -111,7 +111,10 @@ def add_file(pipe, srcpath, tgtpath):
 
 def run_import(srcdir, message):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
-    pipe = sp.Popen(cmd, stdin=sp.PIPE)
+    kwargs = {"stdin": sp.PIPE}
+    if sys.version_info >= (3, 2, 0):
+        kwargs["universal_newlines"] = False
+    pipe = sp.Popen(cmd, **kwargs)
     start_commit(pipe, message)
     for path, dnames, fnames in os.walk(srcdir):
         for fn in fnames:
