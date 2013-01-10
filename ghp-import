@@ -50,6 +50,7 @@ def is_repo(d):
         return True
     return False
 
+
 def find_repo(path):
     if is_repo(path):
         return True
@@ -59,6 +60,7 @@ def find_repo(path):
     if parent == path:
         return False
     return find_repo(parent)
+
 
 def try_rebase(remote, branch):
     cmd = ['git', 'rev-list', '--max-count=1', 'origin/%s' % branch]
@@ -71,10 +73,12 @@ def try_rebase(remote, branch):
         return False
     return True
 
+
 def get_config(key):
     p = sp.Popen(['git', 'config', key], stdin=sp.PIPE, stdout=sp.PIPE)
     (value, stderr) = p.communicate()
     return value.strip()
+
 
 def get_prev_commit(branch):
     cmd = ['git', 'rev-list', '--max-count=1', branch]
@@ -84,11 +88,13 @@ def get_prev_commit(branch):
         return None
     return rev.decode('utf-8').strip()
 
+
 def mk_when(timestamp=None):
     if timestamp is None:
         timestamp = int(time.time())
     currtz = "%+05d" % (time.timezone / 36) # / 3600 * 100
     return "%s %s" % (timestamp, currtz)
+
 
 def start_commit(pipe, branch, message):
     uname = get_config("user.name")
@@ -101,6 +107,7 @@ def start_commit(pipe, branch, message):
         write(pipe, enc('from %s\n' % head))
     write(pipe, enc('deleteall\n'))
 
+
 def add_file(pipe, srcpath, tgtpath):
     write(pipe, enc('M 100644 inline %s\n' % tgtpath))
     with open(srcpath) as handle:
@@ -108,6 +115,7 @@ def add_file(pipe, srcpath, tgtpath):
         write(pipe, enc('data %d\n' % len(data)))
         write(pipe, enc(data))
         write(pipe, enc('\n'))
+
 
 def run_import(srcdir, branch, message):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
@@ -125,6 +133,7 @@ def run_import(srcdir, branch, message):
     if pipe.wait() != 0:
         sys.stdout.write(enc("Failed to process commit.\n"))
 
+
 def options():
     return [
         op.make_option('-m', dest='mesg', default='Update documentation',
@@ -136,6 +145,7 @@ def options():
         op.make_option('-b', dest='branch', default='gh-pages',
             help='Name of the branch to write to. [%default]'),
     ]
+
 
 def main():
     parser = op.OptionParser(usage=__usage__, option_list=options())
@@ -161,6 +171,6 @@ def main():
     if opts.push:
         sp.check_call(['git', 'push', opts.remote, opts.branch])
 
+
 if __name__ == '__main__':
     main()
-
