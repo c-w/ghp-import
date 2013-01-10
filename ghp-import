@@ -13,15 +13,17 @@ import time
 __usage__ = "%prog [OPTIONS] DIRECTORY"
 
 
-def _enc(text):
-    if not isinstance(text, bytes):
-        text = text.encode()
-    return text
-
-if sys.version_info >= (2, 6, 0):
-    enc = _enc
+if sys.version_info[0] == 3:
+    def enc(text):
+        if isinstance(text, bytes):
+            return text
+        return text.encode()
 else:
-    enc = lambda t: t
+    def enc(text):
+        if isinstance(text, unicode):
+            return text.encode('utf-8')
+        return text
+
 
 def is_repo(d):
     if not os.path.isdir(d):
