@@ -72,7 +72,7 @@ def get_prev_commit():
     (rev, ignore) = p.communicate()
     if p.wait() != 0:
         return None
-    return rev.strip()
+    return rev.decode('utf-8').strip()
 
 def mk_when(timestamp=None):
     if timestamp is None:
