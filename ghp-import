@@ -18,11 +18,21 @@ if sys.version_info[0] == 3:
         if isinstance(text, bytes):
             return text
         return text.encode()
+
+    def write(pipe, data):
+        try:
+            pipe.stdin.write(data)
+        except IOError as e:
+            if e.errno != errno.EPIPE:
+                raise
 else:
     def enc(text):
         if isinstance(text, unicode):
             return text.encode('utf-8')
         return text
+
+    def write(pipe, data):
+        pipe.stdin.write(data)
 
 
 def is_repo(d):
@@ -83,21 +93,21 @@ def mk_when(timestamp=None):
 def start_commit(pipe, message):
     uname = get_config("user.name")
     email = get_config("user.email")
-    pipe.stdin.write(enc('commit refs/heads/gh-pages\n'))
-    pipe.stdin.write(enc('committer %s <%s> %s\n' % (uname, email, mk_when())))
-    pipe.stdin.write(enc('data %d\n%s\n' % (len(message), message)))
+    write(pipe, enc('commit refs/heads/gh-pages\n'))
+    write(pipe, enc('committer %s <%s> %s\n' % (uname, email, mk_when())))
+    write(pipe, enc('data %d\n%s\n' % (len(message), message)))
     head = get_prev_commit()
     if head:
-        pipe.stdin.write(enc('from %s\n' % head))
-    pipe.stdin.write(enc('deleteall\n'))
+        write(pipe, enc('from %s\n' % head))
+    write(pipe, enc('deleteall\n'))
 
 def add_file(pipe, srcpath, tgtpath):
-    pipe.stdin.write(enc('M 100644 inline %s\n' % tgtpath))
+    write(pipe, enc('M 100644 inline %s\n' % tgtpath))
     with open(srcpath) as handle:
         data = handle.read()
-        pipe.stdin.write(enc('data %d\n' % len(data)))
-        pipe.stdin.write(enc(data))
-        pipe.stdin.write(enc('\n'))
+        write(pipe, enc('data %d\n' % len(data)))
+        write(pipe, enc(data))
+        write(pipe, enc('\n'))
 
 def run_import(srcdir, message):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
@@ -107,7 +117,7 @@ def run_import(srcdir, message):
         for fn in fnames:
             fpath = os.path.join(path, fn)
             add_file(pipe, fpath, os.path.relpath(fpath, start=srcdir))
-    pipe.stdin.write(enc('\n'))
+    write(pipe, enc('\n'))
     pipe.stdin.close()
     if pipe.wait() != 0:
         sys.stdout.write(enc("Failed to process commit.\n"))
