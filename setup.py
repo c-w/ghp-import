@@ -6,7 +6,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.rst")).read()
+LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.md")).read()
 
 setup(
     name = "ghp-import",
