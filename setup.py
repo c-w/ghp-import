@@ -6,11 +6,11 @@ try:
 except ImportError:
     from distutils.core import setup
 
-LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.rst")).read()
+LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.md")).read()
 
 setup(
     name = "ghp-import",
-    version = "0.2.0",
+    version = "0.2.1",
     description = "Copy your docs directly to the gh-pages branch.",
     long_description = LONG_DESC,
     author = "Paul Joseph Davis",
