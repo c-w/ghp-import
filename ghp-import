@@ -107,9 +107,11 @@ def start_commit(pipe, branch, message):
         write(pipe, enc('from %s\n' % head))
     write(pipe, enc('deleteall\n'))
 
+def normpath4git(path):
+    return '/'.join(os.path.normpath(path).split(os.path.sep))
 
 def add_file(pipe, srcpath, tgtpath):
-    write(pipe, enc('M 100644 inline %s\n' % tgtpath))
+    write(pipe, enc('M 100644 inline %s\n' % normpath4git(tgtpath)))
     with open(srcpath) as handle:
         data = handle.read()
         write(pipe, enc('data %d\n' % len(data)))
