@@ -117,6 +117,11 @@ def add_file(pipe, srcpath, tgtpath):
         write(pipe, enc('\n'))
 
 
+def gitpath(fname):
+    norm = os.path.normpath(fname)
+    return "/".join(norm.split(os.path.sep))
+
+
 def run_import(srcdir, branch, message):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
     kwargs = {"stdin": sp.PIPE}
@@ -127,7 +132,8 @@ def run_import(srcdir, branch, message):
     for path, dnames, fnames in os.walk(srcdir):
         for fn in fnames:
             fpath = os.path.join(path, fn)
-            add_file(pipe, fpath, os.path.relpath(fpath, start=srcdir))
+            gpath = gitpath(os.path.relpath(fpath, start=srcdir))
+            add_file(pipe, fpath, gpath)
     write(pipe, enc('\n'))
     pipe.stdin.close()
     if pipe.wait() != 0:
