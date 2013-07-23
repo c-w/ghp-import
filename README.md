@@ -1,7 +1,7 @@
 GitHub Pages Import
 ===================
 
-As part of [gunicorn](gunicorn), me and [Benoit Chesneau](benoit) have been
+As part of [gunicorn](gunicorn), [Benoit Chesneau](benoit) and I have been
 starting to look at how to host documentation. There's the obvious method of
 using [GitHub's post-receive hook][github-post] to trigger doc builds and rsync
 to a webserver, but we ended up wanting to try out github's hosting to make the
