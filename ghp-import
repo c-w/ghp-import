@@ -166,7 +166,11 @@ def main():
     if not os.path.isdir(args[0]):
         parser.error("Not a directory: %s" % args[0])
 
-    if not find_repo(os.getcwd()):
+    gitdir = os.getenv("GIT_DIR")
+    if gitdir is None:
+        gitdir = os.getcwd()
+
+    if not find_repo(gitdir):
         parser.error("No Git repository found.")
 
     if not try_rebase(opts.remote, opts.branch):

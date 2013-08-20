@@ -26,7 +26,7 @@ This is what `ghp-import` was written for.
 [gunicorn]: http://www.gunicorn.com/ "Gunicorn"
 [benoit]: http://github.com/benoitc "Benoît Chesneau"
 [github-post]: https://help.github.com/articles/post-receive-hooks "GitHub Post-Receive Hook"
-[ghpages]: http://pages.github.com/ "GitHub Pages"
+[gh-pages]: http://pages.github.com/ "GitHub Pages"
 [sphinx]: http://sphinx.pocoo.org/ "Sphinx Documentation"
 [github-tools]: http://dinoboff.github.com/github-tools/ "github-tools"
 
@@ -61,6 +61,9 @@ a different remote using the `-r` flag.
 
 You can specify a different branch with `-b`. This is useful for user and
 organization page, which are served from the `master` branch.
+
+`ghp-import` also recognizes the `GIT_DIR` environment variable which can be
+useful for Git hooks.
 
 License
 -------
