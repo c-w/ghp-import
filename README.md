@@ -45,6 +45,7 @@ Usage
     Usage: ghp-import [OPTIONS] DIRECTORY
 
     Options:
+      -n          Include a .nojekyll file in the branch.
       -m MESG     The commit message to use on the target branch.
       -p          Push the branch to origin/{branch} after committing.
       -r REMOTE   The name of the remote to push to. [origin]

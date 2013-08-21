@@ -117,12 +117,18 @@ def add_file(pipe, srcpath, tgtpath):
         write(pipe, enc('\n'))
 
 
+def add_nojekyll(pipe):
+    write(pipe, enc('M 100644 inline .nojekyll\n'))
+    write(pipe, enc('data 0\n'))
+    write(pipe, enc('\n'))
+
+
 def gitpath(fname):
     norm = os.path.normpath(fname)
     return "/".join(norm.split(os.path.sep))
 
 
-def run_import(srcdir, branch, message):
+def run_import(srcdir, branch, message, nojekyll):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
     kwargs = {"stdin": sp.PIPE}
     if sys.version_info >= (3, 2, 0):
@@ -134,6 +140,8 @@ def run_import(srcdir, branch, message):
             fpath = os.path.join(path, fn)
             gpath = gitpath(os.path.relpath(fpath, start=srcdir))
             add_file(pipe, fpath, gpath)
+    if nojekyll:
+        add_nojekyll(pipe)
     write(pipe, enc('\n'))
     pipe.stdin.close()
     if pipe.wait() != 0:
@@ -142,6 +150,9 @@ def run_import(srcdir, branch, message):
 
 def options():
     return [
+        op.make_option('-n', dest='nojekyll', default=False,
+            action="store_true",
+            help='Include a .nojekyll file in the branch.'),
         op.make_option('-m', dest='mesg', default='Update documentation',
             help='The commit message to use on the target branch.'),
         op.make_option('-p', dest='push', default=False, action='store_true',
@@ -176,7 +187,7 @@ def main():
     if not try_rebase(opts.remote, opts.branch):
         parser.error("Failed to rebase %s branch." % opts.branch)
 
-    run_import(args[0], opts.branch, opts.mesg)
+    run_import(args[0], opts.branch, opts.mesg, opts.nojekyll)
 
     if opts.push:
         sp.check_call(['git', 'push', opts.remote, opts.branch])
