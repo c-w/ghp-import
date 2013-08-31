@@ -35,31 +35,17 @@ else:
         pipe.stdin.write(data)
 
 
-def is_repo(d):
-    if not os.path.isdir(d):
-        return False
-    if not os.path.isdir(os.path.join(d, 'objects')):
-        return False
-    if not os.path.isdir(os.path.join(d, 'refs')):
-        return False
-
-    headref = os.path.join(d, 'HEAD')
-    if os.path.isfile(headref):
-        return True
-    if os.path.islink(headref) and os.readlink(headref).startswith("refs"):
-        return True
-    return False
-
-
-def find_repo(path):
-    if is_repo(path):
-        return True
-    if is_repo(os.path.join(path, '.git')):
-        return True
-    (parent, ignore) = os.path.split(path)
-    if parent == path:
-        return False
-    return find_repo(parent)
+def check_repo(parser):
+    cmd = ['git', 'rev-parse']
+    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    (ignore, error) = p.communicate()
+    if p.wait() != 0:
+        if not error:
+            error = "Unknown Git error"
+        error = error.decode("utf-8")
+        if error.startswith("fatal: "):
+            error = error[len("fatal: "):]
+        parser.error(error)
 
 
 def try_rebase(remote, branch):
@@ -177,12 +163,7 @@ def main():
     if not os.path.isdir(args[0]):
         parser.error("Not a directory: %s" % args[0])
 
-    gitdir = os.getenv("GIT_DIR")
-    if gitdir is None:
-        gitdir = os.getcwd()
-
-    if not find_repo(gitdir):
-        parser.error("No Git repository found.")
+    check_repo(parser)
 
     if not try_rebase(opts.remote, opts.branch):
         parser.error("Failed to rebase %s branch." % opts.branch)
