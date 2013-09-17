@@ -96,7 +96,7 @@ def start_commit(pipe, branch, message):
 
 def add_file(pipe, srcpath, tgtpath):
     write(pipe, enc('M 100644 inline %s\n' % tgtpath))
-    with open(srcpath) as handle:
+    with open(srcpath, "rb") as handle:
         data = handle.read()
         write(pipe, enc('data %d\n' % len(data)))
         write(pipe, enc(data))
