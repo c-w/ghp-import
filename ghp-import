@@ -124,6 +124,11 @@ def run_import(srcdir, branch, message, nojekyll):
     for path, dnames, fnames in os.walk(srcdir):
         for fn in fnames:
             fpath = os.path.join(path, fn)
+            # Fix unicode filenames on OSX
+            # See http://stackoverflow.com/a/5582439/44289
+            if sys.platform == 'darwin' and sys.version_info >= (3, 0, 0):
+                import unicodedata
+                fpath = unicodedata.normalize('NFKC', fpath)
             gpath = gitpath(os.path.relpath(fpath, start=srcdir))
             add_file(pipe, fpath, gpath)
     if nojekyll:
