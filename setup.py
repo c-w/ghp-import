@@ -10,7 +10,7 @@ LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.md")).read()
 
 setup(
     name = "ghp-import",
-    version = "0.3.2",
+    version = "0.4.0",
     description = "Copy your docs directly to the gh-pages branch.",
     long_description = LONG_DESC,
     author = "Paul Joseph Davis",
