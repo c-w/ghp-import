@@ -102,8 +102,8 @@ def mk_when(timestamp=None):
 
 
 def start_commit(pipe, branch, message):
-    uname = str(get_config("user.name"))
-    email = str(get_config("user.email"))
+    uname = dec(get_config("user.name"))
+    email = dec(get_config("user.email"))
     write(pipe, enc('commit refs/heads/%s\n' % branch))
     write(pipe, enc('committer %s <%s> %s\n' % (uname, email, mk_when())))
     write(pipe, enc('data %d\n%s\n' % (len(message), message)))
