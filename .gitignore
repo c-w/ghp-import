@@ -3,3 +3,24 @@ dist/
 venv/
 ghp_import.egg-info/
 docs/index.html
+
+*.py[cod]
+
+# Mac Finder
+.DS_Store
+
+# PyCharm
+.idea/
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
