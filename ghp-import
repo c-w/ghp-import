@@ -115,7 +115,7 @@ def start_commit(pipe, branch, message):
 
 def add_file(pipe, srcpath, tgtpath):
     with open(srcpath, "rb") as handle:
-        if os.fstat(handle.fileno()).st_mode & 0o111:
+        if os.access(srcpath, os.X_OK):
             write(pipe, enc('M 100755 inline %s\n' % tgtpath))
         else:
             write(pipe, enc('M 100644 inline %s\n' % tgtpath))
