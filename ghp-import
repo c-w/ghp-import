@@ -4,6 +4,7 @@
 # the Tumbolia Public License. See the LICENSE file for more
 # information.
 
+import errno
 import optparse as op
 import os
 import subprocess as sp
