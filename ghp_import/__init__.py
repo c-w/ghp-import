@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-#
 # This file is part of the ghp-import package released under
 # the Tumbolia Public License. See the LICENSE file for more
 # information.
