@@ -167,6 +167,8 @@ def options():
             help='The commit message to use on the target branch.'),
         op.make_option('-p', dest='push', default=False, action='store_true',
             help='Push the branch to origin/{branch} after committing.'),
+        op.make_option('-f', dest='force', default=False, action='store_true',
+            help='Force the push to the repository'),
         op.make_option('-r', dest='remote', default='origin',
             help='The name of the remote to push to. [%default]'),
         op.make_option('-b', dest='branch', default='gh-pages',
@@ -195,7 +197,10 @@ def main():
     run_import(args[0], opts.branch, opts.mesg, opts.nojekyll)
 
     if opts.push:
-        sp.check_call(['git', 'push', opts.remote, opts.branch])
+        if opts.force:
+            sp.check_call(['git', 'push', opts.remote, opts.branch, '--force'])
+        else:
+            sp.check_call(['git', 'push', opts.remote, opts.branch])
 
 
 if __name__ == '__main__':
