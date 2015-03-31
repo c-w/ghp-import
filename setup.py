@@ -1,12 +1,14 @@
 import os
 import sys
 
+from codecs import open
+
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
-LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.md")).read()
+LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.md"), encoding = 'utf-8').read()
 
 setup(
     name = "ghp-import",
