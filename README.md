@@ -63,9 +63,6 @@ a different remote using the `-r` flag.
 You can specify a different branch with `-b`. This is useful for user and
 organization page, which are served from the `master` branch.
 
-`ghp-import` also recognizes the `GIT_DIR` environment variable which can be
-useful for Git hooks.
-
 License
 -------
 
