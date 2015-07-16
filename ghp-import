@@ -69,7 +69,7 @@ def check_repo(parser):
 
 
 def try_rebase(remote, branch):
-    cmd = ['git', 'rev-list', '--max-count=1', 'origin/%s' % branch]
+    cmd = ['git', 'rev-list', '--max-count=1', '%s/%s' % (remote, branch)]
     p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
     (rev, ignore) = p.communicate()
     if p.wait() != 0:
