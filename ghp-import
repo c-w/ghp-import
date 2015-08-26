@@ -98,7 +98,7 @@ def get_prev_commit(branch):
 def mk_when(timestamp=None):
     if timestamp is None:
         timestamp = int(time.time())
-    currtz = "%+05d" % (-1 * time.timezone / 36) # / 3600 * 100
+    currtz = time.strftime('%z')
     return "%s %s" % (timestamp, currtz)
 
 
