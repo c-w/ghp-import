@@ -16,7 +16,7 @@ access documentation sources and code sources at the same time.
 
 Then I stumbled across an interesting looking package called
 [github-tools][github-tools] that looked almost like what I wanted. It was a tad
-complicated and more involved than I wanted but it gave me an idear. Why not
+complicated and more involved than I wanted but it gave me an idea. Why not
 just write a script that can copy a directory to the `gh-pages` branch of the
 repository. This saves me from even having to think about the branch and
 everything becomes magical.
