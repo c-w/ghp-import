@@ -107,7 +107,7 @@ def start_commit(pipe, branch, message):
     email = dec(get_config("user.email"))
     write(pipe, enc('commit refs/heads/%s\n' % branch))
     write(pipe, enc('committer %s <%s> %s\n' % (uname, email, mk_when())))
-    write(pipe, enc('data %d\n%s\n' % (len(message), message)))
+    write(pipe, enc('data %d\n%s\n' % (len(enc(message)), message)))
     head = get_prev_commit(branch)
     if head:
         write(pipe, enc('from %s\n' % head))
