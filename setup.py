@@ -29,5 +29,11 @@ setup(
         "Programming Language :: Python :: 3",
     ],
 
-    scripts = ['ghp-import']
+    py_modules = ["ghp_import"],
+
+    entry_points = {
+        "console_scripts": [
+            "ghp-import = ghp_import:main",
+        ],
+    }
 )
