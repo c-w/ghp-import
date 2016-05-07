@@ -57,7 +57,7 @@ def normalize_path(path):
 
 def check_repo(parser):
     cmd = ['git', 'rev-parse']
-    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
     (ignore, error) = p.communicate()
     if p.wait() != 0:
         if not error:
@@ -70,7 +70,7 @@ def check_repo(parser):
 
 def try_rebase(remote, branch):
     cmd = ['git', 'rev-list', '--max-count=1', '%s/%s' % (remote, branch)]
-    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
     (rev, ignore) = p.communicate()
     if p.wait() != 0:
         return True
@@ -81,14 +81,14 @@ def try_rebase(remote, branch):
 
 
 def get_config(key):
-    p = sp.Popen(['git', 'config', key], stdin=sp.PIPE, stdout=sp.PIPE)
+    p = sp.Popen(['git', 'config', key], stdin=sp.PIPE, stdout=sp.PIPE, shell=True)
     (value, stderr) = p.communicate()
     return value.strip()
 
 
 def get_prev_commit(branch):
     cmd = ['git', 'rev-list', '--max-count=1', branch, '--']
-    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
     (rev, ignore) = p.communicate()
     if p.wait() != 0:
         return None
@@ -139,7 +139,7 @@ def gitpath(fname):
 
 def run_import(srcdir, branch, message, nojekyll):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
-    kwargs = {"stdin": sp.PIPE}
+    kwargs = {"stdin": sp.PIPE, "shell": True}
     if sys.version_info >= (3, 2, 0):
         kwargs["universal_newlines"] = False
     pipe = sp.Popen(cmd, **kwargs)
