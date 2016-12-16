@@ -1,3 +1,4 @@
+import io
 import os
 import sys
 
@@ -6,7 +7,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
-LONG_DESC = open(os.path.join(os.path.dirname(__file__), "README.md")).read()
+LONG_DESC_PATH = os.path.join(os.path.dirname(__file__), "README.md")
+LONG_DESC = io.open(LONG_DESC_PATH, encoding = "utf-8").read()
 
 setup(
     name = "ghp-import",
