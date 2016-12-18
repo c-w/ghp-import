@@ -44,15 +44,17 @@ Usage
 
     Usage: ghp-import [OPTIONS] DIRECTORY
 
-    Options:
-      -n              Include a .nojekyll file in the branch.
-      -m MESG         The commit message to use on the target branch.
-      -p              Push the branch to origin/{branch} after committing.
-      -r REMOTE       The name of the remote to push to. [origin]
-      -b BRANCH       Name of the branch to write to. [gh-pages]
-      -s USE_SHELL    Use the shell when invoking Git. [False]
-      -l FOLLOWLINKS  Follow symlinks when adding files. [False]
-      -h, --help  show this help message and exit
+	Options:
+	  -n          Include a .nojekyll file in the branch.
+	  -c CNAME    Write a CNAME file with the given CNAME.
+	  -m MESG     The commit message to use on the target branch.
+	  -p          Push the branch to origin/{branch} after committing.
+	  -f          Force the push to the repository
+	  -r REMOTE   The name of the remote to push to. [origin]
+	  -b BRANCH   Name of the branch to write to. [gh-pages]
+	  -s          Use the shell when invoking Git. [False]
+	  -l          Follow symlinks when adding files. [False]
+	  -h, --help  show this help message and exit
 
 Its pretty simple. Inside your repository just run `ghp-import $DOCS_DIR`
 where `$DOCS_DIR` is the path to the **built** documentation. This will write a

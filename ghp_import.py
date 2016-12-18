@@ -151,6 +151,11 @@ def add_nojekyll(pipe):
     write(pipe, enc('\n'))
 
 
+def add_cname(pipe, cname):
+    write(pipe, enc('M 100644 inline CNAME\n'))
+    write(pipe, enc('data %d\n%s\n' % (len(enc(cname)), cname)))
+
+
 def gitpath(fname):
     norm = os.path.normpath(fname)
     return "/".join(norm.split(os.path.sep))
@@ -174,6 +179,8 @@ def run_import(git, srcdir, opts):
             add_file(pipe, fpath, gpath)
     if opts.nojekyll:
         add_nojekyll(pipe)
+    if opts.cname is not None:
+        add_cname(pipe, opts.cname)
     write(pipe, enc('\n'))
     pipe.stdin.close()
     if pipe.wait() != 0:
@@ -185,6 +192,8 @@ def options():
         op.make_option('-n', dest='nojekyll', default=False,
             action="store_true",
             help='Include a .nojekyll file in the branch.'),
+        op.make_option('-c', dest='cname', default=None,
+            help='Write a CNAME file with the given CNAME.'),
         op.make_option('-m', dest='mesg', default='Update documentation',
             help='The commit message to use on the target branch.'),
         op.make_option('-p', dest='push', default=False, action='store_true',
