@@ -61,7 +61,7 @@ class Git(object):
             error = self.stderr
             if not error:
                 error = "Unknown Git error"
-            error = error.decode("utf-8")
+            error = dec(error)
             if error.startswith("fatal: "):
                 error = error[len("fatal: "):]
             parser.error(error)
