@@ -1,7 +1,8 @@
 
 docs:
+	pyflakes ./ghp_import.py
 	./docs/build.py > docs/index.html
-	./ghp-import -p docs/
+	./ghp_import.py -p docs/
 
 
 .PHONY: docs
