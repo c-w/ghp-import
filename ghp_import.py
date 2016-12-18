@@ -47,52 +47,71 @@ else:
         pipe.stdin.write(data)
 
 
+class Git(object):
+    def __init__(self, use_shell=False):
+        self.use_shell = use_shell
+
+        self.cmd = None
+        self.pipe = None
+        self.stderr = None
+        self.stdout = None
+
+    def check_repo(self, parser):
+        if self.call('rev-parse') != 0:
+            error = self.stderr
+            if not error:
+                error = "Unknown Git error"
+            error = error.decode("utf-8")
+            if error.startswith("fatal: "):
+                error = error[len("fatal: "):]
+            parser.error(error)
+
+    def try_rebase(self, remote, branch):
+        rc = self.call('rev-list', '--max-count=1', '%s/%s' % (remote, branch))
+        if rc != 0:
+            return True
+        rev = dec(self.stdout.strip())
+        rc = self.call('update-ref', 'refs/heads/%s' % branch, rev)
+        if rc != 0:
+            return False
+        return True
+
+    def get_config(self, key):
+        self.call('config', key)
+        return self.stdout.strip()
+
+    def get_prev_commit(self, branch):
+        rc = self.call('rev-list', '--max-count=1', branch, '--')
+        if rc != 0:
+            return None
+        return dec(self.stdout).strip()
+
+    def open(self, *args, **kwargs):
+        self.cmd = ['git'] + list(args)
+        if sys.version_info >= (3, 2, 0):
+            kwargs['universal_newlines'] = False
+        for k in 'stdin stdout stderr'.split():
+            kwargs[k] = sp.PIPE
+        kwargs['shell'] = self.use_shell
+        self.pipe = sp.Popen(self.cmd, **kwargs)
+        return self.pipe
+
+    def call(self, *args, **kwargs):
+        self.open(*args, **kwargs)
+        (self.stdout, self.stderr) = self.pipe.communicate()
+        return self.pipe.wait()
+
+    def check_call(self, *args, **kwargs):
+        kwargs["shell"] = self.use_shell
+        sp.check_call(['git'] + list(args), **kwargs)
+
+
 def normalize_path(path):
     # Fix unicode pathnames on OS X
     # See: http://stackoverflow.com/a/5582439/44289
     if sys.platform == "darwin":
         return unicodedata.normalize("NFKC", dec(path))
     return path
-
-
-def check_repo(parser):
-    cmd = ['git', 'rev-parse']
-    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
-    (ignore, error) = p.communicate()
-    if p.wait() != 0:
-        if not error:
-            error = "Unknown Git error"
-        error = error.decode("utf-8")
-        if error.startswith("fatal: "):
-            error = error[len("fatal: "):]
-        parser.error(error)
-
-
-def try_rebase(remote, branch):
-    cmd = ['git', 'rev-list', '--max-count=1', '%s/%s' % (remote, branch)]
-    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
-    (rev, ignore) = p.communicate()
-    if p.wait() != 0:
-        return True
-    cmd = ['git', 'update-ref', 'refs/heads/%s' % branch, dec(rev.strip())]
-    if sp.call(cmd) != 0:
-        return False
-    return True
-
-
-def get_config(key):
-    p = sp.Popen(['git', 'config', key], stdin=sp.PIPE, stdout=sp.PIPE, shell=True)
-    (value, stderr) = p.communicate()
-    return value.strip()
-
-
-def get_prev_commit(branch):
-    cmd = ['git', 'rev-list', '--max-count=1', branch, '--']
-    p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
-    (rev, ignore) = p.communicate()
-    if p.wait() != 0:
-        return None
-    return rev.decode('utf-8').strip()
 
 
 def mk_when(timestamp=None):
@@ -102,13 +121,13 @@ def mk_when(timestamp=None):
     return "%s %s" % (timestamp, currtz)
 
 
-def start_commit(pipe, branch, message):
-    uname = dec(get_config("user.name"))
-    email = dec(get_config("user.email"))
+def start_commit(pipe, git, branch, message):
+    uname = dec(git.get_config("user.name"))
+    email = dec(git.get_config("user.email"))
     write(pipe, enc('commit refs/heads/%s\n' % branch))
     write(pipe, enc('committer %s <%s> %s\n' % (uname, email, mk_when())))
     write(pipe, enc('data %d\n%s\n' % (len(enc(message)), message)))
-    head = get_prev_commit(branch)
+    head = git.get_prev_commit(branch)
     if head:
         write(pipe, enc('from %s\n' % head))
     write(pipe, enc('deleteall\n'))
@@ -137,20 +156,23 @@ def gitpath(fname):
     return "/".join(norm.split(os.path.sep))
 
 
-def run_import(srcdir, branch, message, nojekyll):
+def run_import(git, srcdir, opts):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
-    kwargs = {"stdin": sp.PIPE, "shell": True}
+    kwargs = {
+        "stdin": sp.PIPE,
+        "shell": opts.use_shell
+    }
     if sys.version_info >= (3, 2, 0):
         kwargs["universal_newlines"] = False
     pipe = sp.Popen(cmd, **kwargs)
-    start_commit(pipe, branch, message)
-    for path, dnames, fnames in os.walk(srcdir):
+    start_commit(pipe, git, opts.branch, opts.mesg)
+    for path, dnames, fnames in os.walk(srcdir, followlinks=opts.followlinks):
         for fn in fnames:
             fpath = os.path.join(path, fn)
             fpath = normalize_path(fpath)
             gpath = gitpath(os.path.relpath(fpath, start=srcdir))
             add_file(pipe, fpath, gpath)
-    if nojekyll:
+    if opts.nojekyll:
         add_nojekyll(pipe)
     write(pipe, enc('\n'))
     pipe.stdin.close()
@@ -173,6 +195,10 @@ def options():
             help='The name of the remote to push to. [%default]'),
         op.make_option('-b', dest='branch', default='gh-pages',
             help='Name of the branch to write to. [%default]'),
+        op.make_option('-s', dest='use_shell', default=False,
+            help='Use the shell when invoking Git. [%default]'),
+        op.make_option('-l', dest='followlinks', default=False,
+            help='Follow symlinks when adding files. [%default]')
     ]
 
 
@@ -189,18 +215,19 @@ def main():
     if not os.path.isdir(args[0]):
         parser.error("Not a directory: %s" % args[0])
 
-    check_repo(parser)
+    git = Git(use_shell=opts.use_shell)
+    git.check_repo(parser)
 
-    if not try_rebase(opts.remote, opts.branch):
+    if not git.try_rebase(opts.remote, opts.branch):
         parser.error("Failed to rebase %s branch." % opts.branch)
 
-    run_import(args[0], opts.branch, opts.mesg, opts.nojekyll)
+    run_import(git, args[0], opts)
 
     if opts.push:
         if opts.force:
-            sp.check_call(['git', 'push', opts.remote, opts.branch, '--force'])
+            git.check_call('push', opts.remote, opts.branch, '--force')
         else:
-            sp.check_call(['git', 'push', opts.remote, opts.branch])
+            git.check_call('push', opts.remote, opts.branch)
 
 
 if __name__ == '__main__':
