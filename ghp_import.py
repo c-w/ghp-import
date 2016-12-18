@@ -196,8 +196,10 @@ def options():
         op.make_option('-b', dest='branch', default='gh-pages',
             help='Name of the branch to write to. [%default]'),
         op.make_option('-s', dest='use_shell', default=False,
+            action='store_true',
             help='Use the shell when invoking Git. [%default]'),
         op.make_option('-l', dest='followlinks', default=False,
+            action='store_true',
             help='Follow symlinks when adding files. [%default]')
     ]
 
