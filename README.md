@@ -24,7 +24,7 @@ everything becomes magical.
 This is what `ghp-import` was written for.
 
 [gunicorn]: http://www.gunicorn.com/ "Gunicorn"
-[benoit]: http://github.com/benoitc "Benoît Chesneau"
+[benoit]: http://github.com/benoitc "Benoit Chesneau"
 [github-post]: https://help.github.com/articles/post-receive-hooks "GitHub Post-Receive Hook"
 [gh-pages]: http://pages.github.com/ "GitHub Pages"
 [sphinx]: http://sphinx.pocoo.org/ "Sphinx Documentation"
