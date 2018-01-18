@@ -77,6 +77,32 @@ Some Windows users report needing to pass Git commands through the shell which c
 
 The `-l` option will cause the import to follow symlinks for users that have odd configurations that include symlinking outside of their documentation directory.
 
+Python Usage
+------------
+
+You can also call ghp_import directly from your Python code as a library. The
+library has one public function `ghp_import.ghp_import`, which accepts the
+following arguments:
+
+* `srcdir`: The path to the **built** documentation (required).
+* `remote`: The name of the remote to push to. Default: `origin`.
+* `branch`: Name of the branch to write to. Default: `gh-pages`.
+* `mesg`: The commit message to use on the target branch. Default: `Update documentation`.
+* `push`: Push the branch to {remote}/{branch} after committing. Default: `False`.
+* `force`: Force the push to the repository. Default: `False`.
+* `use_shell`: Default: Use the shell when invoking Git. `False`.
+* `followlinks`: Follow symlinks when adding files. Default: `False`.
+* `cname`: Write a CNAME file with the given CNAME. Default: `None`.
+* `nojekyll`: Include a .nojekyll file in the branch. Default: `False`.
+
+With Python's current working directory (cwd) inside your repository, do the
+following:
+
+```python
+from ghp_import import ghp_import
+ghp_import('docs', push=True, cname='example.com')
+```
+
 License
 -------
 
