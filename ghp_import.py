@@ -216,9 +216,15 @@ def options():
     ]
 
 
-def main():
+def main(*args, **kwargs):
     parser = op.OptionParser(usage=__usage__, option_list=options())
-    opts, args = parser.parse_args()
+    if not args:
+        opts, args = parser.parse_args()
+    else:
+        opts = parser.get_default_values()
+        for opt, value in kwargs.items():
+            if opt in dir(opts):
+                setattr(opts, opt, value)
 
     if len(args) == 0:
         parser.error("No import directory specified.")
