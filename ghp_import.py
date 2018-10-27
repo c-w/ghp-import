@@ -11,6 +11,8 @@ import subprocess as sp
 import sys
 import time
 import unicodedata
+from dateutil import tz
+from datetime import datetime
 
 __usage__ = "%prog [OPTIONS] DIRECTORY"
 
@@ -117,7 +119,7 @@ def normalize_path(path):
 def mk_when(timestamp=None):
     if timestamp is None:
         timestamp = int(time.time())
-    currtz = time.strftime('%z')
+    currtz = datetime.now(tz.tzlocal()).strftime('%z')
     return "%s %s" % (timestamp, currtz)
 
 
