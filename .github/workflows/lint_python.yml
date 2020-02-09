@@ -1,9 +1,9 @@
 name: lint_python
- on:
-   pull_request:
-   push:
-   #  branches: [master]
- jobs:
+on:
+  pull_request:
+  push:
+  #  branches: [master]
+jobs:
    lint_python:
      runs-on: ubuntu-latest
      steps:
