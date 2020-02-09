@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 import os
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO    
 
 import markdown
 
@@ -13,10 +16,10 @@ def main():
 
     templ = open(index).read()
 
-    buf = StringIO.StringIO("rw")
+    buf = StringIO("rw")
     markdown.markdownFromFile(input=readme, output=buf)
 
-    print templ.format(body=buf.getvalue())
+    print(templ.format(body=buf.getvalue()))
 
 if __name__ == '__main__':
     main()
