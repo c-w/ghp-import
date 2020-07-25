@@ -5,8 +5,8 @@ jobs:
   lint_python:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-python@master
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
       - run: pip install -r requirements.txt
       - run: black . --diff || true
       - run: codespell --quiet-level=2 || true  # --ignore-words-list="" --skip=""
