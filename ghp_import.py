@@ -248,8 +248,8 @@ def ghp_import(srcdir, **kwargs):
 
     run_import(git, srcdir, **opts)
 
-    if push:
-        if force:
+    if opts['push']:
+        if opts['force']:
             git.check_call('push', opts['remote'], opts['branch'], '--force')
         else:
             git.check_call('push', opts['remote'], opts['branch'])
