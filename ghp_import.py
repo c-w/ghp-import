@@ -122,10 +122,11 @@ def mk_when(timestamp=None):
 
 
 def start_commit(pipe, git, branch, message):
-    uname = dec(git.get_config("user.name"))
-    email = dec(git.get_config("user.email"))
+    uname = os.getenv('GIT_COMMITTER_NAME', dec(git.get_config('user.name')))
+    email = os.getenv('GIT_COMMITTER_EMAIL', dec(git.get_config('user.email')))
+    when = os.getenv('GIT_COMMITTER_DATE', mk_when())
     write(pipe, enc('commit refs/heads/%s\n' % branch))
-    write(pipe, enc('committer %s <%s> %s\n' % (uname, email, mk_when())))
+    write(pipe, enc('committer %s <%s> %s\n' % (uname, email, when)))
     write(pipe, enc('data %d\n%s\n' % (len(enc(message)), message)))
     head = git.get_prev_commit(branch)
     if head:
