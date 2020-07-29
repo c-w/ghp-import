@@ -12,7 +12,13 @@ import sys
 import time
 import unicodedata
 
+__all__ = ['ghp_import']
+
 __usage__ = "%prog [OPTIONS] DIRECTORY"
+
+
+class GhpError(Exception):
+    pass
 
 
 if sys.version_info[0] == 3:
@@ -56,7 +62,7 @@ class Git(object):
         self.stderr = None
         self.stdout = None
 
-    def check_repo(self, parser):
+    def check_repo(self):
         if self.call('rev-parse') != 0:
             error = self.stderr
             if not error:
@@ -64,7 +70,7 @@ class Git(object):
             error = dec(error)
             if error.startswith("fatal: "):
                 error = error[len("fatal: "):]
-            parser.error(error)
+            raise GhpError(error)
 
     def try_rebase(self, remote, branch):
         rc = self.call('rev-list', '--max-count=1', '%s/%s' % (remote, branch))
@@ -162,26 +168,26 @@ def gitpath(fname):
     return "/".join(norm.split(os.path.sep))
 
 
-def run_import(git, srcdir, opts):
+def run_import(git, srcdir, **opts):
     cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
     kwargs = {
         "stdin": sp.PIPE,
-        "shell": opts.use_shell
+        "shell": opts['use_shell']
     }
     if sys.version_info >= (3, 2, 0):
         kwargs["universal_newlines"] = False
     pipe = sp.Popen(cmd, **kwargs)
-    start_commit(pipe, git, opts.branch, opts.mesg)
-    for path, dnames, fnames in os.walk(srcdir, followlinks=opts.followlinks):
+    start_commit(pipe, git, opts['branch'], opts['mesg'])
+    for path, dnames, fnames in os.walk(srcdir, followlinks=opts['followlinks']):
         for fn in fnames:
             fpath = os.path.join(path, fn)
             fpath = normalize_path(fpath)
             gpath = gitpath(os.path.relpath(fpath, start=srcdir))
             add_file(pipe, fpath, gpath)
-    if opts.nojekyll:
+    if opts['nojekyll']:
         add_nojekyll(pipe)
-    if opts.cname is not None:
-        add_cname(pipe, opts.cname)
+    if opts['cname'] is not None:
+        add_cname(pipe, opts['cname'])
     write(pipe, enc('\n'))
     pipe.stdin.close()
     if pipe.wait() != 0:
@@ -217,6 +223,39 @@ def options():
     ]
 
 
+def ghp_import(srcdir, **kwargs):
+    if not os.path.isdir(srcdir):
+        raise GhpError("Not a directory: %s" % srcdir)
+
+    opts = {
+        'remote': 'origin',
+        'branch': 'gh-pages',
+        'mesg': 'Update documentation',
+        'push': False,
+        'force': False,
+        'use_shell': False,
+        'followlinks': False,
+        'cname': None,
+        'nojekyll': False
+    }
+
+    opts.update(kwargs)
+
+    git = Git(use_shell=opts['use_shell'])
+    git.check_repo()
+
+    if not git.try_rebase(opts['remote'], opts['branch']):
+        raise GhpError("Failed to rebase %s branch." % opts['branch'])
+
+    run_import(git, srcdir, **opts)
+
+    if opts['push']:
+        if opts['force']:
+            git.check_call('push', opts['remote'], opts['branch'], '--force')
+        else:
+            git.check_call('push', opts['remote'], opts['branch'])
+
+
 def main():
     parser = op.OptionParser(usage=__usage__, option_list=options())
     opts, args = parser.parse_args()
@@ -227,23 +266,10 @@ def main():
     if len(args) > 1:
         parser.error("Unknown arguments specified: %s" % ', '.join(args[1:]))
 
-    if not os.path.isdir(args[0]):
-        parser.error("Not a directory: %s" % args[0])
-
-    git = Git(use_shell=opts.use_shell)
-    git.check_repo(parser)
-
-    if not git.try_rebase(opts.remote, opts.branch):
-        parser.error("Failed to rebase %s branch." % opts.branch)
-
-    run_import(git, args[0], opts)
-
-    if opts.push:
-        if opts.force:
-            git.check_call('push', opts.remote, opts.branch, '--force')
-        else:
-            git.check_call('push', opts.remote, opts.branch)
-
+    try:
+        ghp_import(args[0], **opts.__dict__)
+    except GhpError as e:
+        parser.error(e.message)
 
 if __name__ == '__main__':
     main()
