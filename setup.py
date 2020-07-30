@@ -15,6 +15,7 @@ setup(
     version = "0.5.5",
     description = "Copy your docs directly to the gh-pages branch.",
     long_description = LONG_DESC,
+    long_description_content_type = 'text/markdown',
     author = "Paul Joseph Davis",
     author_email = "paul.joseph.davis@gmail.com",
     license = "Tumbolia Public License",
