@@ -21,6 +21,10 @@ setup(
     url = "http://github.com/davisp/ghp-import",
     zip_safe = False,
 
+    install_requires = [
+        "python-dateutil>=2.8.1",
+    ],
+
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
