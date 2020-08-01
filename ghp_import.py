@@ -42,12 +42,12 @@ if sys.version_info[0] == 3:
                 raise
 else:
     def enc(text):
-        if isinstance(text, unicode):
+        if isinstance(text, unicode):  # noqa F821
             return text.encode('utf-8')
         return text
 
     def dec(text):
-        if isinstance(text, unicode):
+        if isinstance(text, unicode):  # noqa F821
             return text
         return text.decode('utf-8')
 
@@ -180,7 +180,7 @@ def run_import(git, srcdir, **opts):
         kwargs["universal_newlines"] = False
     pipe = sp.Popen(cmd, **kwargs)
     start_commit(pipe, git, opts['branch'], opts['mesg'])
-    for path, dnames, fnames in os.walk(srcdir, followlinks=opts['followlinks']):
+    for path, _, fnames in os.walk(srcdir, followlinks=opts['followlinks']):
         for fn in fnames:
             fpath = os.path.join(path, fn)
             fpath = normalize_path(fpath)
@@ -198,28 +198,37 @@ def run_import(git, srcdir, **opts):
 
 def options():
     return [
-        op.make_option('-n', '--no-jekyll', dest='nojekyll', default=False,
+        op.make_option(
+            '-n', '--no-jekyll', dest='nojekyll', default=False,
             action="store_true",
             help='Include a .nojekyll file in the branch.'),
-        op.make_option('-c', '--cname', dest='cname', default=None,
+        op.make_option(
+            '-c', '--cname', dest='cname', default=None,
             help='Write a CNAME file with the given CNAME.'),
-        op.make_option('-m', '--message', dest='mesg',
+        op.make_option(
+            '-m', '--message', dest='mesg',
             default='Update documentation',
             help='The commit message to use on the target branch.'),
-        op.make_option('-p', '--push', dest='push', default=False,
+        op.make_option(
+            '-p', '--push', dest='push', default=False,
             action='store_true',
             help='Push the branch to origin/{branch} after committing.'),
-        op.make_option('-f', '--force', dest='force',
+        op.make_option(
+            '-f', '--force', dest='force',
             default=False, action='store_true',
             help='Force the push to the repository'),
-        op.make_option('-r', '--remote', dest='remote', default='origin',
+        op.make_option(
+            '-r', '--remote', dest='remote', default='origin',
             help='The name of the remote to push to. [%default]'),
-        op.make_option('-b', '--branch', dest='branch', default='gh-pages',
+        op.make_option(
+            '-b', '--branch', dest='branch', default='gh-pages',
             help='Name of the branch to write to. [%default]'),
-        op.make_option('-s', '--shell', dest='use_shell', default=False,
+        op.make_option(
+            '-s', '--shell', dest='use_shell', default=False,
             action='store_true',
             help='Use the shell when invoking Git. [%default]'),
-        op.make_option('-l', '--follow-links', dest='followlinks',
+        op.make_option(
+            '-l', '--follow-links', dest='followlinks',
             default=False, action='store_true',
             help='Follow symlinks when adding files. [%default]')
     ]
@@ -272,6 +281,7 @@ def main():
         ghp_import(args[0], **opts.__dict__)
     except GhpError as e:
         parser.error(e.message)
+
 
 if __name__ == '__main__':
     main()

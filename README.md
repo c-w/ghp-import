@@ -1,6 +1,8 @@
 GitHub Pages Import
 ===================
 
+[![CI status](https://github.com/davisp/ghp-import/workflows/CI/badge.svg)](https://github.com/davisp/ghp-import/actions?query=workflow%3Aci)
+
 As part of [gunicorn][gunicorn], [Benoit Chesneau][benoit] and I have been
 starting to look at how to host documentation. There's the obvious method of
 using [GitHub's post-receive hook][github-post] to trigger doc builds and rsync

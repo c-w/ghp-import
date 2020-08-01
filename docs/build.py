@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 
+import io
 import os
-import StringIO
 
-import markdown
+from markdown import markdown
 
 
 def main():
     base = os.path.abspath(os.path.dirname(__file__))
-    index = os.path.join(base, "index.html.tmpl")
-    readme = os.path.join(os.path.dirname(base), "README.md")
 
-    templ = open(index).read()
+    readme_path = os.path.join(os.path.dirname(base), "README.md")
+    readme = io.open(readme_path, encoding="utf-8").read()
 
-    buf = StringIO.StringIO("rw")
-    markdown.markdownFromFile(input=readme, output=buf)
+    template_path = os.path.join(base, "index.html.tmpl")
+    template = io.open(template_path, encoding="utf-8").read()
 
-    print templ.format(body=buf.getvalue())
+    print(template.format(body=markdown(readme)))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
