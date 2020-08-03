@@ -20,7 +20,8 @@ __usage__ = "%prog [OPTIONS] DIRECTORY"
 
 
 class GhpError(Exception):
-    pass
+    def __init__(self, message):
+        self.message = message
 
 
 if sys.version_info[0] == 3:
