@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - run: git remote -v
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
