@@ -17,3 +17,5 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: make install
       - run: make lint
+      - run: git remote add tests https://:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+      - run: make -e DOCS_BRANCH="test-${{ matrix.os }}-${{ matrix.python-version }}" -e REMOTE=tests docs
