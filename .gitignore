@@ -3,5 +3,7 @@
 build/
 dist/
 venv/
+*.pyc
+__pycache__/
 ghp_import.egg-info/
 docs/index.html
