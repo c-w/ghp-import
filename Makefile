@@ -10,7 +10,7 @@ lint:
 
 docs:
 	./docs/build.py
-	./ghp_import.py $(DOCS_OPTS) docs/ -b $(DOCS_BRANCH) -r $(DOCS_REMOTE) -m "Update docs [skip ci]"
+	ghp-import $(DOCS_OPTS) docs/ -b $(DOCS_BRANCH) -r $(DOCS_REMOTE) -m "Update docs [skip ci]"
 
 clean:
 	python -c "import os; os.remove(os.path.join('docs', 'index.html'))"
