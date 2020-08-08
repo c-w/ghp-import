@@ -10,7 +10,7 @@ lint:
 	flake8 ./ghp_import.py ./setup.py ./docs/build.py
 
 docs:
-	./docs/build.py > docs/index.html
+	./docs/build.py
 	./ghp_import.py $(DOCS_OPTS) docs/ -b $(DOCS_BRANCH) -r $(DOCS_REMOTE)
 
 clean:

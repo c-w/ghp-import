@@ -15,7 +15,9 @@ def main():
     template_path = os.path.join(base, "index.html.tmpl")
     template = io.open(template_path, encoding="utf-8").read()
 
-    print(template.format(body=markdown(readme)))
+    index_path = os.path.join(base, "index.html")
+    with io.open(index_path, mode="w", encoding="utf-8") as fobj:
+        fobj.write(template.format(body=markdown(readme)))
 
 
 if __name__ == "__main__":
