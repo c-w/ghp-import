@@ -8,7 +8,8 @@ jobs:
     strategy:
       matrix:
         python-version: [2.7, 3.8]
-        os: [ubuntu]
+        os: [ubuntu, windows, macos]
+        opts: ['--shell', '']
 
     steps:
       - uses: actions/checkout@v2
@@ -17,3 +18,4 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: make install
       - run: make lint
+      - run: make -e DOCS_OPTS="${{ matrix.opts }}" docs
