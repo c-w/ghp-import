@@ -25,6 +25,13 @@ setup(
         "python-dateutil>=2.8.1",
     ],
 
+    extras_require={
+        'dev': [
+            'markdown',
+            'flake8',
+        ],
+    },
+
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
