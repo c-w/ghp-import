@@ -1,5 +1,6 @@
 DOCS_BRANCH := gh-pages
 DOCS_REMOTE := origin
+DOCS_OPTS := -p
 
 install:
 	pip install -r requirements-dev.txt
@@ -10,7 +11,7 @@ lint:
 
 docs:
 	./docs/build.py > docs/index.html
-	./ghp_import.py -p docs/ -b $(DOCS_BRANCH) -r $(DOCS_REMOTE)
+	./ghp_import.py $(DOCS_OPTS) docs/ -b $(DOCS_BRANCH) -r $(DOCS_REMOTE)
 
 clean:
 	python -c "import os; os.remove(os.path.join('docs', 'index.html'))"
