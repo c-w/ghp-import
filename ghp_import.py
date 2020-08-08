@@ -14,6 +14,11 @@ import unicodedata
 from dateutil import tz
 from datetime import datetime
 
+try:
+    from shlex import quote
+except ImportError:
+    from pipes import quote
+
 __all__ = ['ghp_import']
 
 __usage__ = "%prog [OPTIONS] DIRECTORY"
@@ -96,11 +101,14 @@ class Git(object):
         return dec(self.stdout).strip()
 
     def open(self, *args, **kwargs):
-        self.cmd = ['git'] + list(args)
+        if self.use_shell:
+            self.cmd = 'git ' + ' '.join(map(quote, args))
+        else:
+            self.cmd = ['git'] + list(args)
         if sys.version_info >= (3, 2, 0):
             kwargs['universal_newlines'] = False
         for k in 'stdin stdout stderr'.split():
-            kwargs[k] = sp.PIPE
+            kwargs.setdefault(k, sp.PIPE)
         kwargs['shell'] = self.use_shell
         self.pipe = sp.Popen(self.cmd, **kwargs)
         return self.pipe
@@ -172,14 +180,8 @@ def gitpath(fname):
 
 
 def run_import(git, srcdir, **opts):
-    cmd = ['git', 'fast-import', '--date-format=raw', '--quiet']
-    kwargs = {
-        "stdin": sp.PIPE,
-        "shell": opts['use_shell']
-    }
-    if sys.version_info >= (3, 2, 0):
-        kwargs["universal_newlines"] = False
-    pipe = sp.Popen(cmd, **kwargs)
+    pipe = git.open('fast-import', '--date-format=raw', '--quiet',
+                    stdin=sp.PIPE, stdout=None, stderr=None)
     start_commit(pipe, git, opts['branch'], opts['mesg'])
     for path, _, fnames in os.walk(srcdir, followlinks=opts['followlinks']):
         for fn in fnames:
