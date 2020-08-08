@@ -11,7 +11,7 @@ LONG_DESC = io.open(LONG_DESC_PATH, encoding="utf-8").read()
 
 setup(
     name="ghp-import",
-    version="0.6.0",
+    version="1.0.0",
     description="Copy your docs directly to the gh-pages branch.",
     long_description=LONG_DESC,
     long_description_content_type='text/markdown',
