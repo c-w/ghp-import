@@ -1,0 +1,21 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - run: make install
+      - run: git config --global user.name "ghp-import-bot" && git config --global user.email "ghp@import.bot"
+      - run: make -e DOCS_BRANCH="test-circleci-$CIRCLE_BUILD_NUM" docs clean
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only:
+                - master
