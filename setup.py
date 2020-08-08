@@ -17,7 +17,7 @@ setup(
     long_description_content_type='text/markdown',
     author="Paul Joseph Davis",
     author_email="paul.joseph.davis@gmail.com",
-    license="Tumbolia Public License",
+    license="Apache Software License",
     url="http://github.com/davisp/ghp-import",
     zip_safe=False,
 
@@ -35,6 +35,7 @@ setup(
 
     classifiers=[
         "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         'Natural Language :: English',
         "Operating System :: OS Independent",
