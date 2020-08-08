@@ -1,0 +1,16 @@
+language: python
+
+branches:
+  only:
+    - master
+
+install:
+  - make install
+
+before_script:
+  - git remote add github "https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" 2>&1 >/dev/null
+  - export GIT_COMMITTER_NAME="ghp-import-bot"
+  - export GIT_COMMITTER_EMAIL="ghp@import.bot"
+
+script:
+  - make -e DOCS_BRANCH="test-travis-${TRAVIS_BUILD_NUMBER}" -e DOCS_REMOTE=github docs clean
