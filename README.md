@@ -2,6 +2,7 @@ GitHub Pages Import
 ===================
 
 [![CI status](https://github.com/davisp/ghp-import/workflows/CI/badge.svg)](https://github.com/davisp/ghp-import/actions?query=workflow%3Aci)
+[![CircleCI](https://circleci.com/gh/c-w/ghp-import/tree/master.svg?style=svg)](https://circleci.com/gh/c-w/ghp-import/tree/master)
 
 As part of [gunicorn][gunicorn], [Benoit Chesneau][benoit] and I have been
 starting to look at how to host documentation. There's the obvious method of
