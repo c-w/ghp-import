@@ -188,6 +188,8 @@ def run_import(git, srcdir, **opts):
             fpath = os.path.join(path, fn)
             fpath = normalize_path(fpath)
             gpath = gitpath(os.path.relpath(fpath, start=srcdir))
+            if opts['prefix']:
+                gpath = os.path.join(opts['prefix'], gpath)
             add_file(pipe, fpath, gpath)
     if opts['nojekyll']:
         add_nojekyll(pipe)
@@ -216,6 +218,10 @@ def options():
             '-p', '--push', dest='push', default=False,
             action='store_true',
             help='Push the branch to origin/{branch} after committing.'),
+        op.make_option(
+            '-x', '--prefix', dest='prefix', default=None,
+            help='The prefix to add to each file that gets pushed to the '
+                 'remote. [%default]'),
         op.make_option(
             '-f', '--force', dest='force',
             default=False, action='store_true',
@@ -246,6 +252,7 @@ def ghp_import(srcdir, **kwargs):
         'branch': 'gh-pages',
         'mesg': 'Update documentation',
         'push': False,
+        'prefix': None,
         'force': False,
         'use_shell': False,
         'followlinks': False,

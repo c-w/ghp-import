@@ -57,6 +57,9 @@ Options:
   -m MESG, --message=MESG
                         The commit message to use on the target branch.
   -p, --push            Push the branch to origin/{branch} after committing.
+  -x PREFIX, --prefix=PREFIX
+                        The prefix to add to each file that gets pushed to the
+                        remote. [none]
   -f, --force           Force the push to the repository
   -r REMOTE, --remote=REMOTE
                         The name of the remote to push to. [origin]
@@ -94,6 +97,7 @@ following arguments:
 * `branch`: Name of the branch to write to. Default: `gh-pages`.
 * `mesg`: The commit message to use on the target branch. Default: `Update documentation`.
 * `push`: Push the branch to {remote}/{branch} after committing. Default: `False`.
+* `prefix`: The prefix to add to each file that gets pushed to the remote. Default: `None`.
 * `force`: Force the push to the repository. Default: `False`.
 * `use_shell`: Default: Use the shell when invoking Git. `False`.
 * `followlinks`: Follow symlinks when adding files. Default: `False`.
