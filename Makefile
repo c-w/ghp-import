@@ -17,4 +17,8 @@ clean:
 	git branch -D $(DOCS_BRANCH)
 	git push $(DOCS_REMOTE) --delete $(DOCS_BRANCH)
 
-.PHONY: docs lint install clean
+release:
+	python setup.py sdist
+	twine upload --skip-existing --non-interactive ./dist/*
+
+.PHONY: docs lint install clean release
