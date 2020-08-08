@@ -9,7 +9,7 @@ lint:
 	flake8 ./ghp_import.py ./setup.py ./docs/build.py
 
 docs:
-	./docs/build.py
+	python ./docs/build.py
 	ghp-import $(DOCS_OPTS) docs/ -b $(DOCS_BRANCH) -r $(DOCS_REMOTE) -m "Update docs [skip ci]"
 
 clean:
