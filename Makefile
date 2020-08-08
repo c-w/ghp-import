@@ -3,8 +3,7 @@ DOCS_REMOTE := origin
 DOCS_OPTS := -p
 
 install:
-	pip install -r requirements-dev.txt
-	pip install -e .
+	pip install -e .[dev]
 
 lint:
 	flake8 ./ghp_import.py ./setup.py ./docs/build.py
