@@ -247,19 +247,7 @@ def ghp_import(srcdir, **kwargs):
     if not os.path.isdir(srcdir):
         raise GhpError("Not a directory: %s" % srcdir)
 
-    opts = {
-        'remote': 'origin',
-        'branch': 'gh-pages',
-        'mesg': 'Update documentation',
-        'push': False,
-        'prefix': None,
-        'force': False,
-        'use_shell': False,
-        'followlinks': False,
-        'cname': None,
-        'nojekyll': False
-    }
-
+    opts = {opt.dest: opt.default for opt in options()}
     opts.update(kwargs)
 
     git = Git(use_shell=opts['use_shell'])
