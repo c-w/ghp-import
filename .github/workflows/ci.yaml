@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.8]
+        python-version: ['2.7', '3.8']
         os: [ubuntu, windows, macos]
         opts: ['--shell', '']
 
@@ -19,3 +19,4 @@ jobs:
       - run: make install
       - run: make lint
       - run: make -e DOCS_OPTS="${{ matrix.opts }}" docs
+        continue-on-error: ${{ matrix.python-version == '2.7' }}
