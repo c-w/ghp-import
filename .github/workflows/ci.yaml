@@ -19,4 +19,3 @@ jobs:
       - run: make install
       - run: make lint
       - run: make -e DOCS_OPTS="${{ matrix.opts }}" docs
-        continue-on-error: ${{ matrix.python-version == '2.7' }}
