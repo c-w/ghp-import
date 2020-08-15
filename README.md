@@ -7,6 +7,7 @@ GitHub Pages Import
 [![AzureDevOps](https://clewolff.visualstudio.com/ghp-import/_apis/build/status/c-w.ghp-import?branchName=master)](https://clewolff.visualstudio.com/ghp-import/_build/latest?definitionId=10&branchName=master)
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Version](https://img.shields.io/pypi/v/ghp-import.svg)](https://pypi.org/project/ghp-import/)
 
 As part of [gunicorn][gunicorn], [Benoit Chesneau][benoit] and I have been
 starting to look at how to host documentation. There's the obvious method of
