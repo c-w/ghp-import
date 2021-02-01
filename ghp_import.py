@@ -6,7 +6,6 @@ import os
 import subprocess as sp
 import sys
 import time
-import unicodedata
 from dateutil import tz
 from datetime import datetime
 
@@ -119,14 +118,6 @@ class Git(object):
         sp.check_call(['git'] + list(args), **kwargs)
 
 
-def normalize_path(path):
-    # Fix unicode pathnames on OS X
-    # See: http://stackoverflow.com/a/5582439/44289
-    if sys.platform == "darwin":
-        return unicodedata.normalize("NFKC", dec(path))
-    return path
-
-
 def mk_when(timestamp=None):
     if timestamp is None:
         timestamp = int(time.time())
@@ -182,7 +173,6 @@ def run_import(git, srcdir, **opts):
     for path, _, fnames in os.walk(srcdir, followlinks=opts['followlinks']):
         for fn in fnames:
             fpath = os.path.join(path, fn)
-            fpath = normalize_path(fpath)
             gpath = gitpath(os.path.relpath(fpath, start=srcdir))
             if opts['prefix']:
                 gpath = os.path.join(opts['prefix'], gpath)
