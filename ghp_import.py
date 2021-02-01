@@ -167,6 +167,7 @@ def gitpath(fname):
 
 
 def run_import(git, srcdir, **opts):
+    srcdir = dec(srcdir)
     pipe = git.open('fast-import', '--date-format=raw', '--quiet',
                     stdin=sp.PIPE, stdout=None, stderr=None)
     start_commit(pipe, git, opts['branch'], opts['mesg'])
