@@ -212,7 +212,7 @@ def options():
         op.make_option(
             '-f', '--force', dest='force',
             default=False, action='store_true',
-            help='Force the push to the repository'),
+            help='Force the push to the repository.'),
         op.make_option(
             '-r', '--remote', dest='remote', default='origin',
             help='The name of the remote to push to. [%default]'),
