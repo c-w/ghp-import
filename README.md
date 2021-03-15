@@ -63,7 +63,7 @@ Options:
   -x PREFIX, --prefix=PREFIX
                         The prefix to add to each file that gets pushed to the
                         remote. [none]
-  -f, --force           Force the push to the repository
+  -f, --force           Force the push to the repository.
   -r REMOTE, --remote=REMOTE
                         The name of the remote to push to. [origin]
   -b BRANCH, --branch=BRANCH
