@@ -75,12 +75,15 @@ class Git(object):
                 error = error[len("fatal: "):]
             raise GhpError(error)
 
-    def try_rebase(self, remote, branch):
+    def try_rebase(self, remote, branch, no_history=False):
         rc = self.call('rev-list', '--max-count=1', '%s/%s' % (remote, branch))
         if rc != 0:
             return True
         rev = dec(self.stdout.strip())
-        rc = self.call('update-ref', 'refs/heads/%s' % branch, rev)
+        if no_history:
+            rc = self.call('update-ref', 'refs/heads/%s' % branch, rev, '-d')
+        else:
+            rc = self.call('update-ref', 'refs/heads/%s' % branch, rev)
         if rc != 0:
             return False
         return True
@@ -214,6 +217,10 @@ def options():
             default=False, action='store_true',
             help='Force the push to the repository.'),
         op.make_option(
+            '-o', '--no-history', dest='no_history',
+            default=False, action='store_true',
+            help='Force new commit without parent history.'),
+        op.make_option(
             '-r', '--remote', dest='remote', default='origin',
             help='The name of the remote to push to. [%default]'),
         op.make_option(
@@ -240,13 +247,13 @@ def ghp_import(srcdir, **kwargs):
     git = Git(use_shell=opts['use_shell'])
     git.check_repo()
 
-    if not git.try_rebase(opts['remote'], opts['branch']):
+    if not git.try_rebase(opts['remote'], opts['branch'], opts['no_history']):
         raise GhpError("Failed to rebase %s branch." % opts['branch'])
 
     run_import(git, srcdir, **opts)
 
     if opts['push']:
-        if opts['force']:
+        if opts['force'] or opts['no_history']:
             git.check_call('push', opts['remote'], opts['branch'], '--force')
         else:
             git.check_call('push', opts['remote'], opts['branch'])

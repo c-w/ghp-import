@@ -64,6 +64,7 @@ Options:
                         The prefix to add to each file that gets pushed to the
                         remote. [none]
   -f, --force           Force the push to the repository.
+  -o, --no-history      Force new commit without parent history.
   -r REMOTE, --remote=REMOTE
                         The name of the remote to push to. [origin]
   -b BRANCH, --branch=BRANCH
@@ -80,6 +81,10 @@ commit to your `gh-pages` branch with the current documents in it.
 If you specify `-p` it will also attempt to push the `gh-pages` branch to
 GitHub. By default it'll just run `git push origin gh-pages`. You can specify
 a different remote using the `-r` flag.
+
+The `-o` option will discard any previous history and ensure that only a
+single commit is always pushed to the `gh-pages` branch. This is useful to
+avoid bloating the repository size and is **highly recommended**.
 
 You can specify a different branch with `-b`. This is useful for user and
 organization page, which are served from the `master` branch.
@@ -102,6 +107,7 @@ following arguments:
 * `push`: Push the branch to {remote}/{branch} after committing. Default: `False`.
 * `prefix`: The prefix to add to each file that gets pushed to the remote. Default: `None`.
 * `force`: Force the push to the repository. Default: `False`.
+* `no_history`: Force new commit without parent history. Default: `False`.
 * `use_shell`: Default: Use the shell when invoking Git. `False`.
 * `followlinks`: Follow symlinks when adding files. Default: `False`.
 * `cname`: Write a CNAME file with the given CNAME. Default: `None`.
