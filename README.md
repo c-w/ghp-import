@@ -4,7 +4,6 @@ GitHub Pages Import
 [![CI status](https://github.com/davisp/ghp-import/workflows/CI/badge.svg)](https://github.com/davisp/ghp-import/actions?query=workflow%3Aci)
 [![CircleCI](https://circleci.com/gh/c-w/ghp-import/tree/master.svg?style=svg)](https://circleci.com/gh/c-w/ghp-import/tree/master)
 [![TravisCI](https://travis-ci.org/c-w/ghp-import.svg?branch=master)](https://travis-ci.org/c-w/ghp-import)
-[![AzureDevOps](https://clewolff.visualstudio.com/ghp-import/_apis/build/status/c-w.ghp-import?branchName=master)](https://clewolff.visualstudio.com/ghp-import/_build/latest?definitionId=10&branchName=master)
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Version](https://img.shields.io/pypi/v/ghp-import.svg)](https://pypi.org/project/ghp-import/)
