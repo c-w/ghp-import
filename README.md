@@ -46,7 +46,7 @@ take backups before playing with this. This script assumes that `gh-pages` is
 100% derivative. You should never edit files in your `gh-pages` branch by hand
 if you're using this script because you will lose your work.
 
-When used with a prefix, only files blow the set prefix will be destroyed, limiting the
+When used with a prefix, only files below the set prefix will be destroyed, limiting the
 above warning to just that directory and everything below it.
 
 Usage
