@@ -128,7 +128,7 @@ def mk_when(timestamp=None):
     return "%s %s" % (timestamp, currtz)
 
 
-def start_commit(pipe, git, branch, message):
+def start_commit(pipe, git, branch, message, prefix=None):
     uname = os.getenv('GIT_COMMITTER_NAME', dec(git.get_config('user.name')))
     email = os.getenv('GIT_COMMITTER_EMAIL', dec(git.get_config('user.email')))
     when = os.getenv('GIT_COMMITTER_DATE', mk_when())
@@ -138,7 +138,10 @@ def start_commit(pipe, git, branch, message):
     head = git.get_prev_commit(branch)
     if head:
         write(pipe, enc('from %s\n' % head))
-    write(pipe, enc('deleteall\n'))
+    if prefix:
+        write(pipe, enc('D %s\n' % prefix))
+    else:
+        write(pipe, enc('deleteall\n'))
 
 
 def add_file(pipe, srcpath, tgtpath):
@@ -173,7 +176,7 @@ def run_import(git, srcdir, **opts):
     srcdir = dec(srcdir)
     pipe = git.open('fast-import', '--date-format=raw', '--quiet',
                     stdin=sp.PIPE, stdout=None, stderr=None)
-    start_commit(pipe, git, opts['branch'], opts['mesg'])
+    start_commit(pipe, git, opts['branch'], opts['mesg'], opts['prefix'])
     for path, _, fnames in os.walk(srcdir, followlinks=opts['followlinks']):
         for fn in fnames:
             fpath = os.path.join(path, fn)
@@ -211,7 +214,8 @@ def options():
         op.make_option(
             '-x', '--prefix', dest='prefix', default=None,
             help='The prefix to add to each file that gets pushed to the '
-                 'remote. [%default]'),
+                 'remote. Only files below this prefix will be cleared '
+                 'out. [%default]'),
         op.make_option(
             '-f', '--force', dest='force',
             default=False, action='store_true',

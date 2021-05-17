@@ -46,6 +46,9 @@ take backups before playing with this. This script assumes that `gh-pages` is
 100% derivative. You should never edit files in your `gh-pages` branch by hand
 if you're using this script because you will lose your work.
 
+When used with a prefix, only files below the set prefix will be destroyed, limiting the
+above warning to just that directory and everything below it.
+
 Usage
 -----
 
@@ -61,7 +64,8 @@ Options:
   -p, --push            Push the branch to origin/{branch} after committing.
   -x PREFIX, --prefix=PREFIX
                         The prefix to add to each file that gets pushed to the
-                        remote. [none]
+                        remote. Only files below this prefix will be cleared
+                        out. [none]
   -f, --force           Force the push to the repository.
   -o, --no-history      Force new commit without parent history.
   -r REMOTE, --remote=REMOTE
