@@ -264,7 +264,8 @@ def ghp_import(srcdir, **kwargs):
 
 
 def main():
-    parser = op.OptionParser(usage=__usage__, option_list=options())
+    parser = op.OptionParser(usage=__usage__, option_list=options(),
+                             version=__version__)
     opts, args = parser.parse_args()
 
     if len(args) == 0:
