@@ -1,17 +1,29 @@
 import io
 import os
+import re
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
-LONG_DESC_PATH = os.path.join(os.path.dirname(__file__), "README.md")
+HERE = os.path.dirname(__file__)
+LONG_DESC_PATH = os.path.join(HERE, "README.md")
 LONG_DESC = io.open(LONG_DESC_PATH, encoding="utf-8").read()
+
+with io.open(os.path.join(HERE, "ghp_import.py"), encoding="utf-8") as fobj:
+    for line in fobj:
+        match = re.match(
+            r"^__version__\s*=\s*['\"](?P<version>[\d.]+)['\"]$",
+            line.strip()
+        )
+        if match:
+            VERSION = match.group("version")
+            break
 
 setup(
     name="ghp-import",
-    version="1.1.0",
+    version=VERSION,
     description="Copy your docs directly to the gh-pages branch.",
     long_description=LONG_DESC,
     long_description_content_type='text/markdown',
