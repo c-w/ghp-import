@@ -6,6 +6,19 @@ on:
       - master
 
 jobs:
+  gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - run: git remote set-url --push origin "https://:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: make install
+      - run: make docs
+
   pypi:
     runs-on: ubuntu-latest
     if: "startsWith(github.event.head_commit.message, 'This is ')"
