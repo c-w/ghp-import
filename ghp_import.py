@@ -81,7 +81,7 @@ class Git(object):
             return True
         rev = dec(self.stdout.strip())
         if no_history:
-            rc = self.call('update-ref', 'refs/heads/%s' % branch, rev, '-d')
+            rc = self.call('update-ref', '-d', 'refs/heads/%s' % branch)
         else:
             rc = self.call('update-ref', 'refs/heads/%s' % branch, rev)
         if rc != 0:
