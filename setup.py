@@ -26,7 +26,7 @@ setup(
     version=VERSION,
     description="Copy your docs directly to the gh-pages branch.",
     long_description=LONG_DESC,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     author="Paul Joseph Davis",
     author_email="paul.joseph.davis@gmail.com",
     license="Apache Software License",
@@ -38,10 +38,10 @@ setup(
     ],
 
     extras_require={
-        'dev': [
-            'twine',
-            'markdown',
-            'flake8',
+        "dev": [
+            "twine",
+            "markdown",
+            "flake8",
         ],
     },
 
@@ -49,7 +49,7 @@ setup(
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
-        'Natural Language :: English',
+        "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
