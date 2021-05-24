@@ -30,7 +30,7 @@ setup(
     author="Paul Joseph Davis",
     author_email="paul.joseph.davis@gmail.com",
     license="Apache Software License",
-    url="http://github.com/davisp/ghp-import",
+    url="https://github.com/c-w/ghp-import",
     zip_safe=False,
 
     install_requires=[
