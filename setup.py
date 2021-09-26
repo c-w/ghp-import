@@ -42,6 +42,7 @@ setup(
             "twine",
             "markdown",
             "flake8",
+            "wheel",
         ],
     },
 
