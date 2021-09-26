@@ -15,7 +15,7 @@ except ImportError:
     from pipes import quote
 
 __all__ = ['ghp_import']
-__version__ = "2.0.1"
+__version__ = "2.0.2"
 __usage__ = "%prog [OPTIONS] DIRECTORY"
 
 
