@@ -18,7 +18,7 @@ clean:
 	git push $(DOCS_REMOTE) --delete $(DOCS_BRANCH)
 
 release:
-	python setup.py sdist
+	python setup.py sdist bdist_wheel
 	twine upload --skip-existing --non-interactive ./dist/*
 
 .PHONY: docs lint install clean release
