@@ -222,7 +222,7 @@ def options():
             default=None,
             help='The prefix to add to each file that gets pushed to the '
                  'remote. Only files below this prefix will be cleared '
-                 'out. [%default]',
+                 'out. [%(default)s]',
         )),
         (('-f', '--force'), dict(
             dest='force',
@@ -238,24 +238,24 @@ def options():
         (('-r', '--remote'), dict(
             dest='remote',
             default='origin',
-            help='The name of the remote to push to. [%default]',
+            help='The name of the remote to push to. [%(default)s]',
         )),
         (('-b', '--branch'), dict(
             dest='branch',
             default='gh-pages',
-            help='Name of the branch to write to. [%default]',
+            help='Name of the branch to write to. [%(default)s]',
         )),
         (('-s', '--shell'), dict(
             dest='use_shell',
             default=False,
             action='store_true',
-            help='Use the shell when invoking Git. [%default]',
+            help='Use the shell when invoking Git. [%(default)s]',
         )),
         (('-l', '--follow-links'), dict(
             dest='followlinks',
             default=False,
             action='store_true',
-            help='Follow symlinks when adding files. [%default]',
+            help='Follow symlinks when adding files. [%(default)s]',
         ))
     ]
 
@@ -283,24 +283,18 @@ def ghp_import(srcdir, **kwargs):
 
 
 def main():
-    from optparse import OptionParser, make_option
+    from argparse import ArgumentParser
 
-    parser = OptionParser(
-        usage=__usage__,
-        option_list=[make_option(*args, **kwargs)
-                     for (args, kwargs) in options()],
-        version=__version__,
-    )
-    opts, args = parser.parse_args()
+    parser = ArgumentParser()
+    parser.add_argument("--version", action="version", version=__version__)
+    parser.add_argument("directory")
+    for args, kwargs in options():
+        parser.add_argument(*args, **kwargs)
 
-    if len(args) == 0:
-        parser.error("No import directory specified.")
-
-    if len(args) > 1:
-        parser.error("Unknown arguments specified: %s" % ', '.join(args[1:]))
+    args = parser.parse_args().__dict__
 
     try:
-        ghp_import(args[0], **opts.__dict__)
+        ghp_import(args.pop("directory"), **args)
     except GhpError as e:
         parser.error(e.message)
 
