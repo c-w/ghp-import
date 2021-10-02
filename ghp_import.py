@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 
 import errno
-import optparse as op
 import os
 import subprocess as sp
 import sys
@@ -196,48 +195,68 @@ def run_import(git, srcdir, **opts):
 
 def options():
     return [
-        op.make_option(
-            '-n', '--no-jekyll', dest='nojekyll', default=False,
+        (('-n', '--no-jekyll'), dict(
+            dest='nojekyll',
+            default=False,
             action="store_true",
-            help='Include a .nojekyll file in the branch.'),
-        op.make_option(
-            '-c', '--cname', dest='cname', default=None,
-            help='Write a CNAME file with the given CNAME.'),
-        op.make_option(
-            '-m', '--message', dest='mesg',
+            help='Include a .nojekyll file in the branch.',
+        )),
+        (('-c', '--cname'), dict(
+            dest='cname',
+            default=None,
+            help='Write a CNAME file with the given CNAME.',
+        )),
+        (('-m', '--message'), dict(
+            dest='mesg',
             default='Update documentation',
-            help='The commit message to use on the target branch.'),
-        op.make_option(
-            '-p', '--push', dest='push', default=False,
+            help='The commit message to use on the target branch.',
+        )),
+        (('-p', '--push'), dict(
+            dest='push',
+            default=False,
             action='store_true',
-            help='Push the branch to origin/{branch} after committing.'),
-        op.make_option(
-            '-x', '--prefix', dest='prefix', default=None,
+            help='Push the branch to origin/{branch} after committing.',
+        )),
+        (('-x', '--prefix'), dict(
+            dest='prefix',
+            default=None,
             help='The prefix to add to each file that gets pushed to the '
                  'remote. Only files below this prefix will be cleared '
-                 'out. [%default]'),
-        op.make_option(
-            '-f', '--force', dest='force',
+                 'out. [%(default)s]',
+        )),
+        (('-f', '--force'), dict(
+            dest='force',
             default=False, action='store_true',
-            help='Force the push to the repository.'),
-        op.make_option(
-            '-o', '--no-history', dest='no_history',
-            default=False, action='store_true',
-            help='Force new commit without parent history.'),
-        op.make_option(
-            '-r', '--remote', dest='remote', default='origin',
-            help='The name of the remote to push to. [%default]'),
-        op.make_option(
-            '-b', '--branch', dest='branch', default='gh-pages',
-            help='Name of the branch to write to. [%default]'),
-        op.make_option(
-            '-s', '--shell', dest='use_shell', default=False,
+            help='Force the push to the repository.',
+        )),
+        (('-o', '--no-history'), dict(
+            dest='no_history',
+            default=False,
             action='store_true',
-            help='Use the shell when invoking Git. [%default]'),
-        op.make_option(
-            '-l', '--follow-links', dest='followlinks',
-            default=False, action='store_true',
-            help='Follow symlinks when adding files. [%default]')
+            help='Force new commit without parent history.',
+        )),
+        (('-r', '--remote'), dict(
+            dest='remote',
+            default='origin',
+            help='The name of the remote to push to. [%(default)s]',
+        )),
+        (('-b', '--branch'), dict(
+            dest='branch',
+            default='gh-pages',
+            help='Name of the branch to write to. [%(default)s]',
+        )),
+        (('-s', '--shell'), dict(
+            dest='use_shell',
+            default=False,
+            action='store_true',
+            help='Use the shell when invoking Git. [%(default)s]',
+        )),
+        (('-l', '--follow-links'), dict(
+            dest='followlinks',
+            default=False,
+            action='store_true',
+            help='Follow symlinks when adding files. [%(default)s]',
+        ))
     ]
 
 
@@ -245,7 +264,7 @@ def ghp_import(srcdir, **kwargs):
     if not os.path.isdir(srcdir):
         raise GhpError("Not a directory: %s" % srcdir)
 
-    opts = {opt.dest: opt.default for opt in options()}
+    opts = {kwargs["dest"]: kwargs["default"] for _, kwargs in options()}
     opts.update(kwargs)
 
     git = Git(use_shell=opts['use_shell'])
@@ -264,18 +283,18 @@ def ghp_import(srcdir, **kwargs):
 
 
 def main():
-    parser = op.OptionParser(usage=__usage__, option_list=options(),
-                             version=__version__)
-    opts, args = parser.parse_args()
+    from argparse import ArgumentParser
 
-    if len(args) == 0:
-        parser.error("No import directory specified.")
+    parser = ArgumentParser()
+    parser.add_argument("--version", action="version", version=__version__)
+    parser.add_argument("directory")
+    for args, kwargs in options():
+        parser.add_argument(*args, **kwargs)
 
-    if len(args) > 1:
-        parser.error("Unknown arguments specified: %s" % ', '.join(args[1:]))
+    args = parser.parse_args().__dict__
 
     try:
-        ghp_import(args[0], **opts.__dict__)
+        ghp_import(args.pop("directory"), **args)
     except GhpError as e:
         parser.error(e.message)
 
