@@ -15,7 +15,6 @@ except ImportError:
 
 __all__ = ['ghp_import']
 __version__ = "2.0.2"
-__usage__ = "%prog [OPTIONS] DIRECTORY"
 
 
 class GhpError(Exception):
