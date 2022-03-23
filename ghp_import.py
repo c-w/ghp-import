@@ -154,8 +154,12 @@ def add_file(pipe, srcpath, tgtpath):
         write(pipe, enc('\n'))
 
 
-def add_nojekyll(pipe):
-    write(pipe, enc('M 100644 inline .nojekyll\n'))
+def add_nojekyll(pipe, prefix=None):
+    if prefix:
+        fpath = os.path.join(prefix, '.nojekyll')
+    else:
+        fpath = '.nojekyll'
+    write(pipe, enc('M 100644 inline %s\n' % fpath))
     write(pipe, enc('data 0\n'))
     write(pipe, enc('\n'))
 
@@ -183,7 +187,7 @@ def run_import(git, srcdir, **opts):
                 gpath = os.path.join(opts['prefix'], gpath)
             add_file(pipe, fpath, gpath)
     if opts['nojekyll']:
-        add_nojekyll(pipe)
+        add_nojekyll(pipe, opts['prefix'])
     if opts['cname'] is not None:
         add_cname(pipe, opts['cname'])
     write(pipe, enc('\n'))
