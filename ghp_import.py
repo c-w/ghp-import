@@ -156,9 +156,10 @@ def add_file(pipe, srcpath, tgtpath):
 
 def add_nojekyll(pipe, prefix=None):
     if prefix:
-        write(pipe, enc('M 100644 inline %s\n' % os.path.join(prefix, '.nojekyll')))
+        fpath = os.path.join(prefix, '.nojekyll')
     else:
-        write(pipe, enc('M 100644 inline .nojekyll\n'))
+        fpath = '.nojekyll'
+    write(pipe, enc('M 100644 inline %s\n' % fpath))
     write(pipe, enc('data 0\n'))
     write(pipe, enc('\n'))
 
