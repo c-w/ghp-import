@@ -14,7 +14,7 @@ except ImportError:
     from pipes import quote
 
 __all__ = ['ghp_import']
-__version__ = "2.0.2"
+__version__ = "2.1.0"
 
 
 class GhpError(Exception):
