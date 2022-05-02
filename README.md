@@ -8,8 +8,8 @@ GitHub Pages Import
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Version](https://img.shields.io/pypi/v/ghp-import.svg)](https://pypi.org/project/ghp-import/)
 
-As part of [gunicorn][gunicorn], [Benoit Chesneau][benoit] and I have been
-starting to look at how to host documentation. There's the obvious method of
+As part of [gunicorn][gunicorn], [Benoit Chesneau][benoit] and [Paul Davis][davisp]
+were looking at how to host documentation. There's the obvious method of
 using [GitHub's post-receive hook][github-post] to trigger doc builds and rsync
 to a webserver, but we ended up wanting to try out github's hosting to make the
 whole interface a bit more robust.
@@ -21,17 +21,18 @@ documentation sources in the branch with code is a bit difficult. And it really
 turns into a head scratcher for things like [Sphinx][sphinx] that want to
 access documentation sources and code sources at the same time.
 
-Then I stumbled across an interesting looking package called
-[github-tools][github-tools] that looked almost like what I wanted. It was a tad
-complicated and more involved than I wanted but it gave me an idea. Why not
+Then we stumbled across an interesting looking package called
+[github-tools][github-tools] that looked almost like what we wanted. It was a tad
+complicated and more involved than we wanted but it gave us an idea. Why not
 just write a script that can copy a directory to the `gh-pages` branch of the
-repository. This saves me from even having to think about the branch and
+repository. This saves us from even having to think about the branch and
 everything becomes magical.
 
 This is what `ghp-import` was written for.
 
 [gunicorn]: http://www.gunicorn.com/ "Gunicorn"
 [benoit]: http://github.com/benoitc "Benoît Chesneau"
+[davisp]: http://github.com/davisp "Paul J. Davis"
 [github-post]: https://help.github.com/articles/post-receive-hooks "GitHub Post-Receive Hook"
 [gh-pages]: http://pages.github.com/ "GitHub Pages"
 [sphinx]: http://sphinx.pocoo.org/ "Sphinx Documentation"
