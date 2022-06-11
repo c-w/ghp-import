@@ -36,7 +36,7 @@ This is what `ghp-import` was written for.
 [github-post]: https://help.github.com/articles/post-receive-hooks "GitHub Post-Receive Hook"
 [gh-pages]: http://pages.github.com/ "GitHub Pages"
 [sphinx]: http://sphinx.pocoo.org/ "Sphinx Documentation"
-[github-tools]: http://dinoboff.github.com/github-tools/ "github-tools"
+[github-tools]: http://dinoboff.github.io/github-tools/ "github-tools"
 
 
 Big Fat Warning
