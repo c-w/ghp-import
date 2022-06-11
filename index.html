@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="ghp-import : Easily import docs to your gh-pages branch." />
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+
+    <title>ghp-import - GitHub Pages import tool</title>
+  </head>
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/davisp/ghp-import">View on GitHub</a>
+
+          <h1 id="project_title">ghp-import</h1>
+          <h2 id="project_tagline">Easily import docs to your gh-pages branch.</h2>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/davisp/ghp-import/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/davisp/ghp-import/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+      <h1>GitHub Pages Import</h1>
+<p><a href="https://github.com/davisp/ghp-import/actions?query=workflow%3Aci"><img alt="CI status" src="https://github.com/davisp/ghp-import/workflows/CI/badge.svg" /></a>
+<a href="https://circleci.com/gh/c-w/ghp-import/tree/master"><img alt="CircleCI" src="https://circleci.com/gh/c-w/ghp-import/tree/master.svg?style=svg" /></a>
+<a href="https://travis-ci.org/c-w/ghp-import"><img alt="TravisCI" src="https://travis-ci.org/c-w/ghp-import.svg?branch=master" /></a></p>
+<p><a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-green.svg" /></a>
+<a href="https://pypi.org/project/ghp-import/"><img alt="Version" src="https://img.shields.io/pypi/v/ghp-import.svg" /></a></p>
+<p>As part of <a href="http://www.gunicorn.com/" title="Gunicorn">gunicorn</a>, <a href="http://github.com/benoitc" title="Benoît Chesneau">Benoit Chesneau</a> and <a href="http://github.com/davisp" title="Paul J. Davis">Paul Davis</a>
+were looking at how to host documentation. There's the obvious method of
+using <a href="https://help.github.com/articles/post-receive-hooks" title="GitHub Post-Receive Hook">GitHub's post-receive hook</a> to trigger doc builds and rsync
+to a webserver, but we ended up wanting to try out github's hosting to make the
+whole interface a bit more robust.</p>
+<p><a href="http://pages.github.com/" title="GitHub Pages">GitHub Pages</a> is a pretty awesome service that GitHub provides for
+hosting project documentation. The only thing is that it requires a
+<code>gh-pages</code> branch that is the site's document root. This means that keeping
+documentation sources in the branch with code is a bit difficult. And it really
+turns into a head scratcher for things like <a href="http://sphinx.pocoo.org/" title="Sphinx Documentation">Sphinx</a> that want to
+access documentation sources and code sources at the same time.</p>
+<p>Then we stumbled across an interesting looking package called
+<a href="http://dinoboff.github.io/github-tools/" title="github-tools">github-tools</a> that looked almost like what we wanted. It was a tad
+complicated and more involved than we wanted but it gave us an idea. Why not
+just write a script that can copy a directory to the <code>gh-pages</code> branch of the
+repository. This saves us from even having to think about the branch and
+everything becomes magical.</p>
+<p>This is what <code>ghp-import</code> was written for.</p>
+<h2>Big Fat Warning</h2>
+<p>This will <strong>DESTROY</strong> your <code>gh-pages</code> branch. If you love it, you'll want to
+take backups before playing with this. This script assumes that <code>gh-pages</code> is
+100% derivative. You should never edit files in your <code>gh-pages</code> branch by hand
+if you're using this script because you will lose your work.</p>
+<p>When used with a prefix, only files below the set prefix will be destroyed, limiting the
+above warning to just that directory and everything below it.</p>
+<h2>Usage</h2>
+<pre><code>Usage: ghp-import [OPTIONS] DIRECTORY
+
+Options:
+  -n, --no-jekyll       Include a .nojekyll file in the branch.
+  -c CNAME, --cname=CNAME
+                        Write a CNAME file with the given CNAME.
+  -m MESG, --message=MESG
+                        The commit message to use on the target branch.
+  -p, --push            Push the branch to origin/{branch} after committing.
+  -x PREFIX, --prefix=PREFIX
+                        The prefix to add to each file that gets pushed to the
+                        remote. Only files below this prefix will be cleared
+                        out. [none]
+  -f, --force           Force the push to the repository.
+  -o, --no-history      Force new commit without parent history.
+  -r REMOTE, --remote=REMOTE
+                        The name of the remote to push to. [origin]
+  -b BRANCH, --branch=BRANCH
+                        Name of the branch to write to. [gh-pages]
+  -s, --shell           Use the shell when invoking Git. [False]
+  -l, --follow-links    Follow symlinks when adding files. [False]
+  -h, --help            show this help message and exit
+</code></pre>
+<p>Its pretty simple. Inside your repository just run <code>ghp-import $DOCS_DIR</code>
+where <code>$DOCS_DIR</code> is the path to the <strong>built</strong> documentation. This will write a
+commit to your <code>gh-pages</code> branch with the current documents in it.</p>
+<p>If you specify <code>-p</code> it will also attempt to push the <code>gh-pages</code> branch to
+GitHub. By default it'll just run <code>git push origin gh-pages</code>. You can specify
+a different remote using the <code>-r</code> flag.</p>
+<p>The <code>-o</code> option will discard any previous history and ensure that only a
+single commit is always pushed to the <code>gh-pages</code> branch. This is useful to
+avoid bloating the repository size and is <strong>highly recommended</strong>.</p>
+<p>You can specify a different branch with <code>-b</code>. This is useful for user and
+organization page, which are served from the <code>master</code> branch.</p>
+<p>Some Windows users report needing to pass Git commands through the shell which can be accomplished by passing <code>-s</code>.</p>
+<p>The <code>-l</code> option will cause the import to follow symlinks for users that have odd configurations that include symlinking outside of their documentation directory.</p>
+<h2>Python Usage</h2>
+<p>You can also call ghp_import directly from your Python code as a library. The
+library has one public function <code>ghp_import.ghp_import</code>, which accepts the
+following arguments:</p>
+<ul>
+<li><code>srcdir</code>: The path to the <strong>built</strong> documentation (required).</li>
+<li><code>remote</code>: The name of the remote to push to. Default: <code>origin</code>.</li>
+<li><code>branch</code>: Name of the branch to write to. Default: <code>gh-pages</code>.</li>
+<li><code>mesg</code>: The commit message to use on the target branch. Default: <code>Update documentation</code>.</li>
+<li><code>push</code>: Push the branch to {remote}/{branch} after committing. Default: <code>False</code>.</li>
+<li><code>prefix</code>: The prefix to add to each file that gets pushed to the remote. Default: <code>None</code>.</li>
+<li><code>force</code>: Force the push to the repository. Default: <code>False</code>.</li>
+<li><code>no_history</code>: Force new commit without parent history. Default: <code>False</code>.</li>
+<li><code>use_shell</code>: Default: Use the shell when invoking Git. <code>False</code>.</li>
+<li><code>followlinks</code>: Follow symlinks when adding files. Default: <code>False</code>.</li>
+<li><code>cname</code>: Write a CNAME file with the given CNAME. Default: <code>None</code>.</li>
+<li><code>nojekyll</code>: Include a .nojekyll file in the branch. Default: <code>False</code>.</li>
+</ul>
+<p>With Python's current working directory (cwd) inside your repository, do the
+following:</p>
+<pre><code class="language-python">from ghp_import import ghp_import
+ghp_import('docs', push=True, cname='example.com')
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">ghp-import maintained by <a href="https://github.com/davisp">davisp</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+  </body>
+</html>
