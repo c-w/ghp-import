@@ -69,6 +69,7 @@ Options:
                         out. [none]
   -f, --force           Force the push to the repository.
   -o, --no-history      Force new commit without parent history.
+  -a, --squash-history  Force squash commits, remove history but keep data.
   -r REMOTE, --remote=REMOTE
                         The name of the remote to push to. [origin]
   -b BRANCH, --branch=BRANCH
@@ -89,6 +90,11 @@ a different remote using the `-r` flag.
 The `-o` option will discard any previous history and ensure that only a
 single commit is always pushed to the `gh-pages` branch. This is useful to
 avoid bloating the repository size and is **highly recommended**.
+
+The `-a` option will discard some previous commits, keeping data. Only commits
+matching current commit message are discarded ("Update documentation" if `-m`
+option is not set). This is useful to avoid bloating the repository size but
+without discarding any data. Similar to `-o` but without data loss.
 
 You can specify a different branch with `-b`. This is useful for user and
 organization page, which are served from the `master` branch.
