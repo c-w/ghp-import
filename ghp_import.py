@@ -197,12 +197,27 @@ def run_import(git, srcdir, **opts):
 
 
 def squash_history(git, branch, message=None):
-    filter_test = '[ "$(git rev-parse refs/heads/%s)" != "$GIT_COMMIT" ]' % branch
+    filter_test = (
+        '[ "$(git rev-parse refs/heads/%s)" != "$GIT_COMMIT" ] '
+        % branch
+    )
     if message:
-        filter_test += ' && [ $(git show -s --format=%%B "$GIT_COMMIT" | grep -c "%s") -gt 0 ]' % message
-    filter_script = 'if %s ; then skip_commit "$@"; else git commit-tree "$@"; fi' % filter_test
-    git.check_call('filter-branch', '--force', '--commit-filter', filter_script, 'refs/heads/%s' % branch,
-                   env={ **os.environ , 'FILTER_BRANCH_SQUELCH_WARNING':'1' })
+        filter_test += (
+            '&& [ $(git show -s --format=%%B "$GIT_COMMIT" '
+            '| grep -c "%s") -gt 0 ]'
+            % message
+        )
+    filter_script = (
+        'if %s ; then skip_commit "$@"; else git commit-tree "$@"; fi'
+        % filter_test
+    )
+    git.check_call(
+        'filter-branch',
+        '--force',
+        '--commit-filter', filter_script,
+        'refs/heads/%s' % branch,
+        env={**os.environ, 'FILTER_BRANCH_SQUELCH_WARNING': '1'}
+    )
 
 
 def options():
