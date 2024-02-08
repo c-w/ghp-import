@@ -196,6 +196,30 @@ def run_import(git, srcdir, **opts):
         sys.stdout.write(enc("Failed to process commit.\n"))
 
 
+def squash_history(git, branch, message=None):
+    filter_test = (
+        '[ "$(git rev-parse refs/heads/%s)" != "$GIT_COMMIT" ] '
+        % branch
+    )
+    if message:
+        filter_test += (
+            '&& [ $(git show -s --format=%%B "$GIT_COMMIT" '
+            '| grep -c "%s") -gt 0 ]'
+            % message
+        )
+    filter_script = (
+        'if %s ; then skip_commit "$@"; else git commit-tree "$@"; fi'
+        % filter_test
+    )
+    git.check_call(
+        'filter-branch',
+        '--force',
+        '--commit-filter', filter_script,
+        'refs/heads/%s' % branch,
+        env={**os.environ, 'FILTER_BRANCH_SQUELCH_WARNING': '1'}
+    )
+
+
 def options():
     return [
         (('-n', '--no-jekyll'), dict(
@@ -238,6 +262,12 @@ def options():
             action='store_true',
             help='Force new commit without parent history.',
         )),
+        (('-a', '--squash-history'), dict(
+            dest='squash_history',
+            default=False,
+            action='store_true',
+            help='Force squash commits, remove history but keep data.',
+        )),
         (('-r', '--remote'), dict(
             dest='remote',
             default='origin',
@@ -277,6 +307,9 @@ def ghp_import(srcdir, **kwargs):
         raise GhpError("Failed to rebase %s branch." % opts['branch'])
 
     run_import(git, srcdir, **opts)
+
+    if opts['squash_history']:
+        squash_history(git, opts['branch'], opts['mesg'])
 
     if opts['push']:
         if opts['force'] or opts['no_history']:

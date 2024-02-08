@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        python-version: ['2.7', '3.9']
+        python-version: ['3.7', '3.12']
         os: [ubuntu, windows, macos]
         opts: ['--shell', '']
 
