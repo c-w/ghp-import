@@ -18,4 +18,5 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: make install
       - run: make lint
+      - run: python -m unittest discover -v
       - run: make -e DOCS_OPTS="${{ matrix.opts }}" docs

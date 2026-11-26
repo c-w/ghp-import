@@ -2,6 +2,7 @@
 
 import errno
 import os
+import posixpath
 import subprocess as sp
 import sys
 import time
@@ -33,12 +34,6 @@ if sys.version_info[0] == 3:
             return text.decode('utf-8')
         return text
 
-    def write(pipe, data):
-        try:
-            pipe.stdin.write(data)
-        except IOError as e:
-            if e.errno != errno.EPIPE:
-                raise
 else:
     def enc(text):
         if isinstance(text, unicode):  # noqa F821
@@ -50,8 +45,15 @@ else:
             return text
         return text.decode('utf-8')
 
-    def write(pipe, data):
+
+def write(pipe, data):
+    try:
         pipe.stdin.write(data)
+    except IOError as e:
+        # Windows can report EINVAL when fast-import has closed its input.
+        windows_broken_pipe = os.name == 'nt' and e.errno == errno.EINVAL
+        if e.errno != errno.EPIPE and not windows_broken_pipe:
+            raise
 
 
 class Git(object):
@@ -156,7 +158,7 @@ def add_file(pipe, srcpath, tgtpath):
 
 def add_nojekyll(pipe, prefix=None):
     if prefix:
-        fpath = os.path.join(prefix, '.nojekyll')
+        fpath = posixpath.join(prefix, '.nojekyll')
     else:
         fpath = '.nojekyll'
     write(pipe, enc('M 100644 inline %s\n' % fpath))
@@ -176,24 +178,27 @@ def gitpath(fname):
 
 def run_import(git, srcdir, **opts):
     srcdir = dec(srcdir)
+    prefix = opts['prefix']
+    if prefix:
+        prefix = prefix.replace(os.sep, '/')
     pipe = git.open('fast-import', '--date-format=rfc2822', '--quiet',
                     stdin=sp.PIPE, stdout=None, stderr=None)
-    start_commit(pipe, git, opts['branch'], opts['mesg'], opts['prefix'])
+    start_commit(pipe, git, opts['branch'], opts['mesg'], prefix)
     for path, _, fnames in os.walk(srcdir, followlinks=opts['followlinks']):
         for fn in fnames:
             fpath = os.path.join(path, fn)
             gpath = gitpath(os.path.relpath(fpath, start=srcdir))
-            if opts['prefix']:
-                gpath = os.path.join(opts['prefix'], gpath)
+            if prefix:
+                gpath = posixpath.join(prefix, gpath)
             add_file(pipe, fpath, gpath)
     if opts['nojekyll']:
-        add_nojekyll(pipe, opts['prefix'])
+        add_nojekyll(pipe, prefix)
     if opts['cname'] is not None:
         add_cname(pipe, opts['cname'])
     write(pipe, enc('\n'))
-    pipe.stdin.close()
-    if pipe.wait() != 0:
-        sys.stdout.write(enc("Failed to process commit.\n"))
+    pipe.communicate()
+    if pipe.returncode != 0:
+        raise GhpError("git fast-import failed to process the commit.")
 
 
 def options():
